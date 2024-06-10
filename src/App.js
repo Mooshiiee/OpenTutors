@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import * as React from 'react';
 
-function App() {
+import {Routes, Route} from 'react-router-dom';
+
+import Home from './pages/Home';
+import SignUpPage from './pages/SignUpPage';
+import Landing from './pages/Landing';
+import LogIn from './pages/LogIn';
+
+import TopBar from './components/TopBar';
+import NavDrawer from './components/NavDrawer';
+
+
+export default function App() {
+
+  const [drawerOpen, setDrawerOpen] = React.useState(false)
+
+  const toggleDrawer = (open) => () => {
+    setDrawerOpen(open);
+  }
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <NavDrawer drawerOpen={drawerOpen} toggleDrawer={toggleDrawer}/>
+      <TopBar toggleDrawer={toggleDrawer} />
+
+      <Routes>
+        <Route path='/' element={<Landing />} />
+        <Route path='/home' element={<Home />} />
+        <Route path='/signup' element={<SignUpPage />} />
+        <Route path='/login/' element={<LogIn />} /> 
+      </Routes>
+    </>
+    
   );
 }
 
-export default App;
+
+
