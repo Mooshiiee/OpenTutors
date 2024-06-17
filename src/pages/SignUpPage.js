@@ -3,8 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -22,15 +20,17 @@ const SignUpFormPaper = styled(Paper)(({ theme }) => ({
   width: '100%', // Ensure it takes the full width of the container
 }));
 
-export default function SignUpPage() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+
+  export default function SignUp() {
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      console.log({
+        email: data.get('email'),
+        password: data.get('password'),
+      });
   };
+
 
   const defaultTheme = createTheme({
     palette: {
@@ -76,6 +76,16 @@ export default function SignUpPage() {
               </Box>
               <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                 <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      name="username"
+                      required
+                      fullWidth
+                      id="username"
+                      label="Username"
+                      autoFocus
+                    />
+                  </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
                       autoComplete="given-name"
@@ -116,12 +126,6 @@ export default function SignUpPage() {
                       type="password"
                       id="password"
                       autoComplete="new-password"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <FormControlLabel
-                      control={<Checkbox value="allowExtraEmails" color="primary" />}
-                      label="I want to receive inspiration, marketing promotions and updates via email."
                     />
                   </Grid>
                 </Grid>

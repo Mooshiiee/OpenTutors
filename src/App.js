@@ -10,7 +10,6 @@ import LogIn from './pages/LogIn';
 import TopBar from './components/TopBar';
 import NavDrawer from './components/NavDrawer';
 
-
 export default function App() {
 
   const [drawerOpen, setDrawerOpen] = React.useState(false)
@@ -18,7 +17,6 @@ export default function App() {
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
   }
-
 
   return (
     <>
@@ -31,6 +29,7 @@ export default function App() {
         <Route path='/signup' element={<SignUpPage />} />
         <Route path='/login/' element={<LogIn />} /> 
       </Routes>
+
     </>
     
   );
