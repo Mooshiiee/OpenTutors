@@ -1,0 +1,70 @@
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.pydist
+*.egg
+*.egg-info/
+dist/
+build/
+*.so
+
+# Django
+*.sqlite3
+*.log
+db.sqlite3
+media/
+staticfiles/
+
+# Virtual environment
+venv/
+env/
+.venv/
+.env/
+
+# macOS
+.DS_Store
+
+# React
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Editor directories and files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# JetBrains
+*.iml
+*.iws
+.idea/
+out/
+
+# Coverage reports
+htmlcov/
+.coverage
+.tox/
+.nox/
+.pytest_cache/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Miscellaneous
+*.bak
+*.swp
+*~
+
