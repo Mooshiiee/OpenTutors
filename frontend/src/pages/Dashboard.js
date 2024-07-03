@@ -1,10 +1,13 @@
-import { Typography ,Paper,Box, Container, Button, Card, CardActionArea, Avatar, CardContent} from '@mui/material';
+import { Divider, Typography ,Paper,Box, Container, Button, Card, CardActionArea, Avatar, CardContent, CircularProgress, Stack} from '@mui/material';
 import Grid from '@mui/material/Grid'
 import React, { useEffect, useState} from 'react';
 import axios from 'axios';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import UpcomingAppointments from '../components/UpcomingAppointments';
 import { Link } from 'react-router-dom';
+
+import CreateSessionGroup from '../components/dashboard/CreateSessionGroup';
+
 /*
 DASHBOARD will have:
 -hello/editProfile/ if userExtraData (blog) else (finish setting up account)
@@ -48,6 +51,8 @@ export default function Dashboard() {
             axiosInstance.get(`dashboard/${localUsername}`)
             .then(response => {
                 setUserData(response.data)
+                setTimeout(() => {
+                }, 750); // Show spinner for 1 second, then show dashboard
             })
             .catch(error => {
                 setErrorMsg(error)
@@ -81,19 +86,32 @@ export default function Dashboard() {
 
     return(
         <ThemeProvider theme={defaultTheme}>
+        {userData.length === 0 ? (
+            <Box sx={{
+                bgcolor: '#8fbc8f',
+                minHeight: '100vh',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center', 
+                }}
+            >
+                <CircularProgress sx={{color: "#ffe4b5"}}/>
+            </Box>
+        ) : (
         <Box sx={{ bgcolor: 'primary.main', my: 2}}>
             <Container>
             <Grid container spacing={2}>
                 <Grid item xs={12} sm={6} md={3}>
                     <Paper elevation={12} sx={{ padding: '16px', textAlign: 'center',
-                        m: '4px'}}>
+                        m: '4px', height:'190px'}}>
                         <Typography variant="h5">Hello {userData.first_name}!</Typography>
                         <Box my={1}>
+                            <Stack>
                             <Button variant='contained' color='info' sx={{m: '8px'}}
                             component={Link} to='/profile'>
                                 View Profile</Button>
                             {userData.lvl2complete ? (
-                               <Button variant='contained' color='info' sx={{m: '8px',paddingX: '15%'}}
+                               <Button variant='contained' color='info' sx={{m: '8px',paddingX: '9%'}}
                                component={Link} to='/blog'>
                                 Visit Blog</Button>
                             ) : (
@@ -101,28 +119,21 @@ export default function Dashboard() {
                                component={Link} to='/extra-signup'>
                                 Finish Setting Up Account</Button>
                             )}
+                            </Stack>
                         </Box>
                     </Paper>
                 </Grid>
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid item xs={12} sm={6} md={4}>
                     <Paper elevation={12} style={{ padding: '16px',textAlign: 'center',
                         margin: '4px' }}>
                         <Typography variant="h6" marginBottom={1}>Upcoming Sessions</Typography>
                         <Box sx={{ maxHeight: 150, overflowY: 'scroll'}}>
-                            <UpcomingAppointments></UpcomingAppointments>
+                            <UpcomingAppointments />
                         </Box>
                     </Paper> 
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
-                    <Paper elevation={12} style={{ padding: '16px', textAlign: 'center', margin: '4px' }}>
-                        <Typography variant="h6">Book a Session</Typography>
-                        <Button variant="contained" color="primary" style={{ margin: '8px' }}>
-                            Math
-                        </Button>
-                        <Button variant="contained" color="secondary" style={{ margin: '8px' }}>
-                            Reading
-                        </Button>
-                    </Paper>
+                    <CreateSessionGroup userData={userData} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>
                     <Paper elevation={12} style={{ padding: '16px', textAlign: 'center', margin: '4px' }}>
@@ -135,7 +146,8 @@ export default function Dashboard() {
 
                                 // Add more tutors as needed
                             ].map((tutor, index) => (
-                                <Card key={index} style={{ minWidth: 200, margin: '4px' }}>
+                                <Box>
+                                <Card key={index} style={{ minWidth: 200, margin: '4px', bgcolor: '#f5f5f5' }}>
                                     <CardActionArea>
                                         <CardContent style={{ display: 'flex', alignItems: 'center' }}>
                                             <Grid container spacing={2}>
@@ -152,6 +164,7 @@ export default function Dashboard() {
                                         </CardContent>
                                     </CardActionArea>
                                 </Card>
+                                </Box>
                             ))}
                         </Box>
                     </Paper>
@@ -165,6 +178,7 @@ export default function Dashboard() {
 
             </Container>
         </Box>
+        )}
         </ThemeProvider>
 
     )

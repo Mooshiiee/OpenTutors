@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.generics import RetrieveAPIView
-
+from django.shortcuts import get_object_or_404
 from api.models import UserProfile
 
 from api.serializers import (
@@ -66,15 +66,39 @@ class DashBoardView(APIView):
             user = User.objects.get(username=username)
             #get the userProf
             userProfile = UserProfile.objects.get(user_id=user.id)
-            print('userprofile instance retrieved')    
-            print(userProfile.lvl2complete)      
-            print(user.userprofile.lvl2complete)  
         except User.DoesNotExist:
             print('user not found')
             return Response(status.HTTP_404_NOT_FOUND)
         
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+    
+class LevelTwoFormView(APIView):
+    authentication_classes= [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+    
+    def post(self, request, username):
+        #get the user instance
+        user = get_object_or_404(User, username=username)
+        #get the userProfile instance
+        userProfile = UserProfile.objects.get(user_id=user.id)
+        
+        print("before serializion ")
+        #ModelSerializer will authomatically update the object with new data
+        serializer = UserProfileSerializer(userProfile, data=request.data)
+        print("after serializion, now checking if valid ")
+
+        if serializer.is_valid():
+            print("f serializer.is_valid()")
+            serializer.validated_data['lvl2complete'] = True
+            print("adding lvl2 = True")
+            instance = serializer.save()
+            print("serializer.save")
+            return Response(status=status.HTTP_200_OK)
+        else:
+            print(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         
 
 

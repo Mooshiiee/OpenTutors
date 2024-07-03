@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Box, Stack, Chip} from '@mui/material'
+import { Typography, Box, Stack, Chip, Divider} from '@mui/material'
 
 export default function UpcomingAppointments() {
     return (
@@ -22,6 +22,7 @@ export default function UpcomingAppointments() {
                     <Typography color="textSecondary">Memorial Lbrary</Typography>
                 </Stack>
             </Box>
+            <Divider />
             <Box sx={{ p: 1, bgcolor: 'grey.100'}} >
                 <Box
                 sx={{display: 'flex', justifyContent: 'space-between', 
@@ -40,6 +41,7 @@ export default function UpcomingAppointments() {
                     <Typography color="textSecondary">Memorial Lbrary</Typography>
                 </Stack>
             </Box>
+            <Divider />
             <Box sx={{ p: 1, bgcolor: 'grey.100'}} >
                 <Box
                 sx={{display: 'flex', justifyContent: 'space-between', 
@@ -58,6 +60,7 @@ export default function UpcomingAppointments() {
                     <Typography color="textSecondary">Memorial Lbrary</Typography>
                 </Stack>
             </Box>
+            <Divider />
             </Box>
     )
 }

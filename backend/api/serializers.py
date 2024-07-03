@@ -11,11 +11,10 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username' ,'email', 'first_name', 'last_name', 'lvl2complete')
         
 class UserProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
     class Meta:
         model = UserProfile
         fields = ['id', 'lvl2complete', 'gradelevel', 'graduationyear', 'bio', 'town',
-                  'school', 'nearestuni', 'user']
+                  'school', 'nearestuni']
         
 class CreateUserSerializer(serializers.ModelSerializer):
     '''FOR CREATING NEW USER'''

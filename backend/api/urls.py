@@ -13,5 +13,6 @@ urlpatterns = [
     path(r'auth/logout-all/', LogoutAllView.as_view(), name='knox_logoutall'),
     path(r'create-user/', views.CreateUserView.as_view()),
     path(r'update-user/<int:pk>', views.UpdateUserView.as_view()),
-    path(r'dashboard/<str:username>', views.DashBoardView.as_view(), name='home')
+    path(r'dashboard/<str:username>', views.DashBoardView.as_view(), name='home'),
+    path(r'level2form/<str:username>', views.LevelTwoFormView.as_view(), name='level2form')
 ]   

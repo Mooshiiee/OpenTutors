@@ -12,7 +12,36 @@ import {TextFieldElement, FormContainer, TextareaAutosizeElement, useFormContext
 
 import axios from 'axios'
 
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme({
+    components: {
+        MuiStepIcon: {
+            styleOverrides: {
+                root: {
+                    '&.MuiStepIcon-root': {
+                        color: '#f0e68c', // Color for disabled (inactive) step icon
+                    },
+                    '&.Mui-active': {
+                        color: '#f0e68c', // Color for active step icon
+                    },
+                    '&.Mui-completed': {
+                        color: '#8fbc8f', // Color for completed step icon
+                    },
+
+                },
+            },
+        },    
+    },
+})
+
+const stepIconTextColor = {
+    '& .MuiStepIcon-text': {
+      fill: 'black', // Set the color for the circle's number
+    },
+};
 
 function StepButtonGroup ( { handleNext, handleBack, activeStep } ) {
     const { formState } = useFormContext()
@@ -42,6 +71,7 @@ function StepButtonGroup ( { handleNext, handleBack, activeStep } ) {
 export default function VerticalLinearStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
   const navigate = useNavigate()
+  const [error, setError] = React.useState('')
 
   const form = useForm({
     mode: "all"
@@ -68,6 +98,11 @@ export default function VerticalLinearStepper() {
 
     const token = localStorage.getItem('token')
     const username = localStorage.getItem('username')
+    
+    // Convert graduationyear and gradelevel to a string
+    data.graduationyear = String(data.graduationyear);
+    data.gradelevel = String(data.gradelevel);
+
 
     const axiosIntance = axios.create({
         baseURL: 'http://127.0.0.1:8000/api/',
@@ -87,6 +122,7 @@ export default function VerticalLinearStepper() {
             }
         })
         .catch(error => {
+            setError("Sorry, There was an Issue. Please check your answers")
             console.log('aint go through my boi')
             console.error(error)
         })
@@ -94,13 +130,14 @@ export default function VerticalLinearStepper() {
   };
 
   return (
+    <ThemeProvider theme={theme}>
     <Box sx={{ maxWidth: 300 }}>
         <FormContainer
             onSuccess={onSubmit}
             formContext={form}
         >
         <Stepper activeStep={activeStep} orientation="vertical">
-            <Step>
+            <Step sx={stepIconTextColor}>
                 <StepLabel>
                     <Typography>Where do you go to school?</Typography>
                 </StepLabel>
@@ -108,7 +145,15 @@ export default function VerticalLinearStepper() {
                     <Box>
                         <TextFieldElement name="school" label="Current School" margin={'dense'} type='text' required/>
                         <TextFieldElement name="town" label="Town" margin={'dense'} type='text' required/>
+                        <TextFieldElement margin={'dense'} label={'Grade'} 
+                                          name={'gradelevel'} required type={'number'}
+                                          InputLabelProps={{
+                                            shrink: true,
+                                          }}
+                                          
 
+ 
+                        />
                     </Box>
                     <Box sx={{ mb: 2 }}>
                         <StepButtonGroup 
@@ -119,17 +164,27 @@ export default function VerticalLinearStepper() {
                     </Box>
                 </StepContent>
             </Step>
-            <Step>
+            <Step sx={stepIconTextColor}>
                 <StepLabel>
                     <Typography>When do you graduate?</Typography>
                 </StepLabel>
                 <StepContent>
                     <Box>
                         <TextFieldElement margin={'dense'} label={'Graduation Year'} 
-                                          name={'graduationyear'} required type={'number'} 
+                                          name={'graduationyear'} required type={'number'}
+                                          inputProps={{
+                                            min: 2020,  
+                                            max: 2040, 
+                                          }}
+                                          InputLabelProps={{
+                                            shrink: true,
+                                          }}
+
                         />
                         <TextFieldElement required margin='dense' label='Nearest University' 
                                           name='nearestuni' type='text' 
+
+                                          
                         />
                     </Box>
                     <Box sx={{ mb: 2 }}>
@@ -141,7 +196,7 @@ export default function VerticalLinearStepper() {
                     </Box>
                 </StepContent>
             </Step>
-            <Step>
+            <Step sx={stepIconTextColor}>
                 <StepLabel>
                     <Typography>Tell us a little about yourself</Typography>
                 </StepLabel>
@@ -175,10 +230,14 @@ export default function VerticalLinearStepper() {
             Submit
           </Button>
           </div>
+          {error && (
+            <Typography>{{error}}</Typography>
+          )}
         </Paper>
       )}
     </FormContainer>
 
     </Box>
+    </ThemeProvider>
   );
 }
