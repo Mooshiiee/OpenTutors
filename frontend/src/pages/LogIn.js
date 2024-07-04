@@ -14,6 +14,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Link, useNavigate } from 'react-router-dom';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
+import Stack from '@mui/material/Stack'
 
 import axios from 'axios';
 
@@ -144,18 +145,15 @@ export default function LogIn( setIsUserLoggedIn ) {
                 >
                   Sign In
                 </Button>
-                <Grid container>
-                  <Grid item xs>
-                    <Link to="#" variant="body2">
-                      Forgot password?
-                    </Link>
-                  </Grid>
-                  <Grid item>
-                    <Link to="/signup" variant="body2">
-                      {"Don't have an account? Sign Up"}
-                    </Link>
-                  </Grid>
-                </Grid>
+
+                <Stack spacing={1}>
+                      <Link to="#" variant="body2">
+                        Forgot password?
+                      </Link>
+                      <Link to="/signup" variant="body2">
+                        Don't have an account? Sign Up
+                      </Link>
+                </Stack>
               </Box>
             </LogInFormPaper>
           </Box>
