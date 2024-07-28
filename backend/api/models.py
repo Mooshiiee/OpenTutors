@@ -20,6 +20,7 @@ class UserProfile(models.Model):
     town = models.CharField(max_length=120, null=True)
     school = models.CharField(max_length=120, null=True)
     nearestuni = models.CharField(max_length=120, null=True)
+    is_tutor = models.BooleanField(default=False)
     
 class Tutor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='tutor')
@@ -54,26 +55,51 @@ class Appointment(models.Model):
     student = models.ForeignKey(UserProfile, on_delete=models.CASCADE,
                                 related_name="student_appointments")
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE,
-                              related_name="tutor_appointments")
+                                related_name="tutor_appointments")
     subject = models.CharField(max_length=100)
-    short_description = models.TextField()
     date_time = models.DateTimeField()
     duration_minutes = models.SmallIntegerField()
-    location = models.CharField(max_length=20, choices=[
+    location = models.CharField(max_length=20, null=True, choices=[
         ('IP', 'In-Person'),
         ('VR', 'Virtual'),
         ('MST','Microsoft Teams'),
         ('ZM', 'Zoom'),
         ('DS', 'Discord'),
         ('EIR','Essay In Review')
-        
     ])
-    status = models.CharField(max_length=20, choices=[
+    student_meeting_preference = models.CharField(max_length=20, default=1, choices=[
+        (1, 'In-Person'),
+        (2, 'Virtual'),
+    ])
+    physical_location = models.CharField(null=True, max_length=255)
+    phycical_location_map_link = models.CharField(null=True, max_length=255),
+    status = models.CharField(max_length=20, default='scheduled', choices=[
         ('scheduled', 'Scheduled'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
     ])
     
-    additional_comments = models.TextField()
+    virtual_link = models.URLField(null=True)
+    additional_comments = models.TextField(null=True)
     
+class EssayAppointment(models.Model):
+    appointment = models.OneToOneField(Appointment, 
+                                       on_delete=models.CASCADE)
+    student_work_link = models.URLField(null=True, blank=True)
+    student_work_text = models.TextField(null=True, blank=True)
+    student_work_file = models.FileField(null=True, blank=True, upload_to='studentwork/')
+    student_comments = models.TextField(null=True)
+    tutor_feedback = models.TextField(null=True)
+    tutor_contact = models.TextField(default='will be updated shortly')
+    is_review_finished = models.BooleanField(default=False)
+    
+class SessionAppointment(models.Model):
+    appointment = models.OneToOneField(Appointment, 
+                                       on_delete=models.CASCADE)
+    student_work = models.TextField()
+    student_work_file = models.FileField()
+    student_work_link = models.URLField()
+    tutor_feedback = models.TextField
+
+
     

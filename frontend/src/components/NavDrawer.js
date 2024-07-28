@@ -18,14 +18,15 @@ export default function NavDrawer( {toggleDrawer, drawerOpen} ) {
     
     //this component re-mounts when initiated, no useEffect() needed
     const token = localStorage.getItem('token')
+    const is_tutor = localStorage.getItem('is_tutor')
 
     const drawerList = (
         <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
             <List>
 
-            {token && (
+            {token && ( 
                 <ListItem disablePadding>
-                    <ListItemButton component={Link} to='/dashboard'>
+                        <ListItemButton component={Link} to={is_tutor ? '/dashboard' : '/tutor-dashboard'}>
                         <ListItemIcon>
                             <DashboardRoundedIcon />
                         </ListItemIcon>

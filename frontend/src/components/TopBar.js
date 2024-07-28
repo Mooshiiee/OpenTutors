@@ -7,11 +7,16 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { ThemeProvider,createTheme } from '@mui/material';
+import RocketLaunchRoundedIcon from '@mui/icons-material/RocketLaunchRounded';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import {Link, useLocation} from 'react-router-dom'
 
+import { useNavigate } from 'react-router-dom';
 
 export default function TopBar({ toggleDrawer, userLoggedIn}) {
+
+  const navigate = useNavigate()
 
   const darkTheme = createTheme({
     palette: {
@@ -49,17 +54,26 @@ export default function TopBar({ toggleDrawer, userLoggedIn}) {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h5" component="div" sx={{ flexGrow: 1,
-              textAlign: 'center'
-            }}>
-              OpenTutors
-            </Typography>
+            <IconButton component={Link} to='/home' color='inherit'>
+              <Typography variant="h5" component="div" sx={{ flexGrow: 1,
+                textAlign: 'center'
+              }}>
+                OpenTutors
+              </Typography>
+            </IconButton>
 
-            {token ? (
-              <Button component={Link} to='/profile'color="inherit">View Profile</Button>
+            {!token ? (
+              <IconButton edge='end' component={Link} to='/profile' color="inherit">
+                <RocketLaunchRoundedIcon />
+              </IconButton>
             ) : (
-              <Button component={Link} to='/login'color="inherit">Log in</Button>
+              <IconButton edge='end' component={Link} to='/login' color="inherit">
+                <AccountCircleIcon />
+              </IconButton>
             )}
+            <IconButton edge='end'>
+              <AccountCircleIcon />
+            </IconButton>
           </Toolbar>
         </AppBar>
       </Box>

@@ -5,7 +5,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
@@ -50,7 +49,14 @@ export default function LogIn( setIsUserLoggedIn ) {
           console.log(response.status)
           localStorage.setItem('token', response.data.token);
           localStorage.setItem('username', response.data.user.username)
-          navigate('/dashboard')
+          localStorage.setItem('is_tutor', response.data.is_tutor)
+
+          if (response.data.is_tutor === true) {
+            navigate('/tutor-dashboard')
+          }
+          else {
+            navigate('/dashboard')
+          }
         }
       })
       .catch(error => {

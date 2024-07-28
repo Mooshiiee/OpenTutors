@@ -29,6 +29,7 @@ export default function Logout () {
                 if (response.status === 204) {
                     localStorage.removeItem('token')
                     localStorage.removeItem('username')
+                    localStorage.removeItem('is_tutor')
                     setTimeout(() => {
                         setLoading(false);
                         navigate('/');

@@ -1,20 +1,25 @@
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 from rest_framework.response import Response 
 from rest_framework import status
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.generics import RetrieveAPIView
 from django.shortcuts import get_object_or_404
-from api.models import UserProfile
+from api.models import UserProfile, Tutor, Appointment, EssayAppointment
+from django.core.exceptions import ObjectDoesNotExist
 
 from api.serializers import (
     CreateUserSerializer, 
     UpdateUserSerializer, 
     LoginSerializer,
     UserSerializer,
-    UserProfileSerializer
+    UserProfileSerializer,
+    ListTutorSerializer,
+    EssayAppointmentSerializer,
+    DashboardSerializer,
 )
 
 from knox import views as knoxviews
@@ -48,31 +53,54 @@ class LoginView(knoxviews.LoginView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)
+
         response = super(LoginView, self).post(request, format=None)
-    
+                
+        #getting tutor from Tutor model
+        try:
+            tutor_profile = Tutor.objects.get(user=user)
+            response.data.update({
+                "is_tutor": True
+            })
+        except Tutor.DoesNotExist:
+            response.data.update({
+                "is_tutor": False
+            })
+            
+
         #add first_name to response
         response.data.update({
             "first_name": user.first_name,
         })
         return response
     
-class DashBoardView(APIView):   
+    
+class DashboardView(APIView):
     authentication_classes = [TokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
-     
-    def get(self, request, username):
-        print('DashBoardView GET is running now')
-        try:
-            user = User.objects.get(username=username)
-            #get the userProf
-            userProfile = UserProfile.objects.get(user_id=user.id)
-        except User.DoesNotExist:
-            print('user not found')
-            return Response(status.HTTP_404_NOT_FOUND)
-        
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
     
+    def get(self, request):
+        try:
+            userProfile = UserProfile.objects.get(user=request.user)
+            upcomingSessions = Appointment.objects.filter(student=userProfile)
+            tutors = Tutor.objects.all()
+        
+            data = {
+                'user': request.user,
+                'tutors': tutors,
+                'appointments': upcomingSessions
+            }
+
+            serializer = DashboardSerializer(data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except ObjectDoesNotExist:
+            return Response({"error": "User profile not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        
+        
 class LevelTwoFormView(APIView):
     authentication_classes= [TokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -99,8 +127,16 @@ class LevelTwoFormView(APIView):
             print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        
-
-
+class ListTutorsView(ListAPIView):
+    queryset = Tutor.objects.all()
+    serializer_class = ListTutorSerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
     
+
+class CreateEssayAppointmentView(CreateAPIView):
+    queryset = EssayAppointment.objects.all()
+    serializer_class = EssayAppointmentSerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
     
