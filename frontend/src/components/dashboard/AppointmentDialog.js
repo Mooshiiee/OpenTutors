@@ -13,7 +13,7 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { Box, Grid, Rating, Stack, Typography} from '@mui/material';
+import { Box, Container, Grid, Rating, Stack, TextField, Typography, ratingClasses} from '@mui/material';
 import axios from 'axios';
 import { replaceInvalidDateByNull } from '@mui/x-date-pickers/internals';
 
@@ -31,8 +31,9 @@ function getLocalTokenPromise () {
 export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setApptDialogOpen }) {
   const [confirmCancel, setConfirmCancel] = React.useState(false);
   const [loading, setLoading] = React.useState(false)
-  const [errorMsg, setErrorMsg] = React.useState(replaceInvalidDateByNull)
-  
+  const [errorMsg, setErrorMsg] = React.useState(null)
+  const [rating, setRating] = React.useState(null)
+
 
   
   dayjs.extend(utc)
@@ -48,6 +49,7 @@ export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setA
   const handleClose = () => {
     setApptDialogOpen(false);
     setConfirmCancel(false)
+    setRating(null)
   };
 
 
@@ -74,8 +76,14 @@ export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setA
     if (token) {
         config.headers.Authorization = `Token ${token}`
     }
-    return config
-})
+    return config  
+  })
+
+  const handleSubmitRating = () => {
+    console.log(rating)
+    //API logic for seting the rating 
+    handleClose()
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -176,12 +184,36 @@ export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setA
       )}
 
       {apptDialogData.status === 'cancelled' && (
-            <Stack flexGrow={1}>
+        <>
+            <Stack flexGrow={3}>
             <Typography>Rate Your Tutor!</Typography>
-            <Rating name="tutor-rating" size="large" />
-            <Typography component='legned'>(Your rating can only be seen by the tutor)</Typography>
+            <Rating name="tutor-rating" size="large"
+                    onChange={(event, value) => setRating(value)}
+            />
+            <Typography component='legend'>(Your rating can only be seen by the tutor)</Typography>
+            <br />
+            {rating && (
+                <>
+                <TextField
+                    id='rating-comment'
+                    multiline
+                    rows={4}
+                    label='Would you like to share a comment? (optional)'
+                    sx={{my: 2}}
+                />
+                <Button
+                    variant='contained'
+                    onClick={handleSubmitRating}
+                    color='secondary'
+                >
+                    Submit Rating
+                </Button>
+                </>
+            )}
             </Stack>
-            {}
+
+
+        </>
       )}
 
       </DialogActions>
