@@ -16,5 +16,6 @@ urlpatterns = [
     path(r'dashboard/', views.DashboardView.as_view()),
     path(r'level2form/<str:username>', views.LevelTwoFormView.as_view(), name='level2form'),
     path(r'get-tutors/', views.ListTutorsView.as_view(), name='get-tutors'),
-    path(r'create-essay-appt/', views.CreateEssayAppointmentView.as_view(), name='create-essay-appt')
+    path(r'create-essay-appt/', views.CreateEssayAppointmentView.as_view(), name='create-essay-appt'),
+    path(r'update-appointment/<int:pk>/', views.UpdateAppointmentView.as_view(), name='update-appointment')
 ]   

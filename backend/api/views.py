@@ -10,6 +10,8 @@ from rest_framework.generics import RetrieveAPIView
 from django.shortcuts import get_object_or_404
 from api.models import UserProfile, Tutor, Appointment, EssayAppointment
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
+
 
 from api.serializers import (
     CreateUserSerializer, 
@@ -20,6 +22,7 @@ from api.serializers import (
     ListTutorSerializer,
     EssayAppointmentSerializer,
     DashboardSerializer,
+    AppointmentUpdateSerializer,
 )
 
 from knox import views as knoxviews
@@ -78,11 +81,12 @@ class LoginView(knoxviews.LoginView):
 class DashboardView(APIView):
     authentication_classes = [TokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
+
     
     def get(self, request):
         try:
             userProfile = UserProfile.objects.get(user=request.user)
-            upcomingSessions = Appointment.objects.filter(student=userProfile)
+            upcomingSessions = Appointment.objects.filter(student=userProfile).exclude(date_time__lt=timezone.now())
             tutors = Tutor.objects.all()
         
             data = {
@@ -139,4 +143,14 @@ class CreateEssayAppointmentView(CreateAPIView):
     serializer_class = EssayAppointmentSerializer
     authentication_classes = [TokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
+
+class UpdateAppointmentView(UpdateAPIView):
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentUpdateSerializer
+    #authentication_classes = [TokenAuthentication, ]
+    #permission_classes = [IsAuthenticated, ]
+    
+    
+    
+    
     

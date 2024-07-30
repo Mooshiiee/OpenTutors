@@ -61,7 +61,7 @@ export default function LogIn( setIsUserLoggedIn ) {
       })
       .catch(error => {
         if (error.response) {
-          if (error.response.status === 400) {
+          if (error.response.status === 401) {
             setErrorMessage('The provided credentials are incorrect')
           }
         } else {

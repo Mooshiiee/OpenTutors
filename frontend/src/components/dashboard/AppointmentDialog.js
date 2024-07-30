@@ -7,15 +7,34 @@ import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
+import LoadingButton from '@mui/lab/LoadingButton';
+
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { Box, Grid, Typography, useMediaQuery } from '@mui/material';
-import { useTheme } from '@emotion/react';
+import { Box, Grid, Rating, Stack, Typography} from '@mui/material';
+import axios from 'axios';
+import { replaceInvalidDateByNull } from '@mui/x-date-pickers/internals';
+
+function getLocalTokenPromise () {
+    return new Promise((resolve, reject) => {
+        try {
+            const localToken = localStorage.getItem('token')
+            resolve(localToken)
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 
 export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setApptDialogOpen }) {
   const [confirmCancel, setConfirmCancel] = React.useState(false);
+  const [loading, setLoading] = React.useState(false)
+  const [errorMsg, setErrorMsg] = React.useState(replaceInvalidDateByNull)
+  
 
-
+  
   dayjs.extend(utc)
   const formattedDateTime = (dateTimeString) => {
     const date = dayjs(dateTimeString)
@@ -31,6 +50,33 @@ export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setA
     setConfirmCancel(false)
   };
 
+
+  const handleFirstCancel = () => {
+    setConfirmCancel(true)
+  }
+
+  const handleConfirmedCancel = () => {
+    console.log('confirmedCancelAppt ran')
+    setLoading(true)
+    setTimeout(() => {
+        setLoading(false)
+        handleClose() 
+    }, 2000);
+  }
+
+  const axiosInstance = axios.create({
+    baseURL: 'http://127.0.0.1:8000/api/',
+    timeout: 1000,
+  });
+
+  axiosInstance.interceptors.request.use(async (config) => {
+    const token = await getLocalTokenPromise()
+    if (token) {
+        config.headers.Authorization = `Token ${token}`
+    }
+    return config
+})
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -39,25 +85,33 @@ export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setA
     console.log(email);
     console.log(formData)
     console.log(formJson)
-    handleClose();
-  }
 
-  const handleFirstCancel = () => {
-    setConfirmCancel(true)
-  }
+    axiosInstance.patch(`update-appointment/${apptDialogData.id}/`, {
+        status: 'cancelled'
+    })
+    .then(response => {
+        if (response.status === 200) {
+            handleConfirmedCancel()
+        }
+    })
+    .catch(error => {
+        console.error(error)
+        if (error.response) {
+            if (error.response.status === 401) {
+                setErrorMsg('Your request could not be validated. Please login again.')
+            }
+        } else {
+            setErrorMsg('Sorry, an issue occured with your request')
+        }
+    })
 
-  const handleConfirmedCancel = () => {
-    console.log('confirmedCancelAppt ran')
-  }
+   }
 
-  const theme = useTheme()
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <Dialog
       open={apptDialogOpen}
       onClose={handleClose}
-      fullWidth={fullScreen}
       PaperProps={{
         component: 'form',
         onSubmit: handleSubmit,
@@ -84,10 +138,11 @@ export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setA
           {[
             { label: 'Tutor:', value: formattedName(apptDialogData)},
             { label: 'Date & Time:', value: formattedDateTime(apptDialogData.date_time) },
-            { label: 'Duration:', value: apptDialogData.duration },
+            { label: 'Duration:', value: apptDialogData.duration_minutes },
             { label: 'Subject:', value: apptDialogData.subject },
             { label: 'Location:', value: apptDialogData.location || 'N/A' },
             { label: 'Status:', value: apptDialogData.status },
+            { label: 'Contact Email:', value:apptDialogData.tutor_email },
           ].map((item, index) => (
             <Grid item container key={index} spacing={2}>
               <Grid item xs={4}>
@@ -111,16 +166,24 @@ export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setA
         px: 3,
         pb: 2
       }}>
-        <Button variant="contained" color="secondary"
-                disabled={confirmCancel}
-        >
-          Contact Tutor
-        </Button>
+
+      {apptDialogData.status === 'scheduled' && (
         <Button variant="contained" color="error" disabled={confirmCancel}
-                onClick={() => handleFirstCancel()}
+            onClick={() => handleFirstCancel()}
         >
-          Cancel Appointment
+            Cancel Appointment
         </Button>
+      )}
+
+      {apptDialogData.status === 'cancelled' && (
+            <Stack flexGrow={1}>
+            <Typography>Rate Your Tutor!</Typography>
+            <Rating name="tutor-rating" size="large" />
+            <Typography component='legned'>(Your rating can only be seen by the tutor)</Typography>
+            </Stack>
+            {}
+      )}
+
       </DialogActions>
         { confirmCancel && (
             <Box
@@ -140,12 +203,21 @@ export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setA
                 > 
                     No, Take me Back!
                 </Button>
-                <Button variant='contained' color="error"
-                    onClick={() => handleConfirmedCancel()}
+
+                <LoadingButton 
+                    type='submit'
                     sx={{ m: 1 }}
-                > 
+                    variant="contained" 
+                    color="error" 
+                    onClick={handleConfirmedCancel}
+                    endIcon={<HighlightOffIcon />}
+                    loading={loading}
+                    loadingPosition="end"
+                >
+                 <span>
                     Yes, Cancel Appointment
-                </Button>
+                </span>
+                </LoadingButton>
             </Box>
           )
         }

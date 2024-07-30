@@ -3,7 +3,6 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { ThemeProvider,createTheme } from '@mui/material';
@@ -16,8 +15,6 @@ import { useNavigate } from 'react-router-dom';
 
 export default function TopBar({ toggleDrawer, userLoggedIn}) {
 
-  const navigate = useNavigate()
-
   const darkTheme = createTheme({
     palette: {
       primary: {
@@ -28,6 +25,9 @@ export default function TopBar({ toggleDrawer, userLoggedIn}) {
       },
       info: {
         main: '#f0e68c',
+      },
+      warning: {
+        main: '#bc8fbc'
       }
     },
   });
@@ -41,7 +41,7 @@ export default function TopBar({ toggleDrawer, userLoggedIn}) {
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <Box sx={{ flexGrow: 1 }}>
+      <Box >
         <AppBar position="static" color='info'>
           <Toolbar>
             <IconButton
@@ -54,26 +54,25 @@ export default function TopBar({ toggleDrawer, userLoggedIn}) {
             >
               <MenuIcon />
             </IconButton>
-            <IconButton component={Link} to='/home' color='inherit'>
-              <Typography variant="h5" component="div" sx={{ flexGrow: 1,
-                textAlign: 'center'
-              }}>
-                OpenTutors
-              </Typography>
-            </IconButton>
+            <div style={{flexGrow: 1}}>
+              <IconButton component={Link} to='/' color='inherit'>
+                <Typography variant="h5" component="div" sx={{ flexGrow: 1,
+                  textAlign: 'center'
+                }}>
+                  OpenTutors
+                </Typography>
+              </IconButton>
+            </div>
 
             {!token ? (
-              <IconButton edge='end' component={Link} to='/profile' color="inherit">
+              <IconButton component={Link} to='/login' color="inherit">
                 <RocketLaunchRoundedIcon />
               </IconButton>
             ) : (
-              <IconButton edge='end' component={Link} to='/login' color="inherit">
+              <IconButton component={Link} to='/profile' color="inherit">
                 <AccountCircleIcon />
               </IconButton>
             )}
-            <IconButton edge='end'>
-              <AccountCircleIcon />
-            </IconButton>
           </Toolbar>
         </AppBar>
       </Box>

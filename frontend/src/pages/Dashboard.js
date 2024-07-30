@@ -37,7 +37,7 @@ export default function Dashboard() {
     const [dashboardData, setDashboardData] = useState([])
 
     const [apptDialogData, setApptDialogData] = useState(false)
-    const [apptDialogOpen, setApptDialogOpen] = useState(false)
+    const [apptDialogOpen, setApptDialogOpen] = useState()
 
     const navigate = useNavigate()
 
@@ -72,7 +72,7 @@ export default function Dashboard() {
             })
             .catch(error => {
                 if (error.response.status === 401) {
-                    navigate('/login')
+                navigate('/login')
                 }
             })
 
@@ -98,10 +98,15 @@ export default function Dashboard() {
           },
           info: {
             main: '#f0e68c',
+            light: '#99ccff',
           },
           error: {
             main: '#ff817b'
+          },
+          warning: {
+            main: '#ffd247'
           }
+
         },
     });
     
@@ -167,10 +172,10 @@ export default function Dashboard() {
             </Grid>
 
              <Typography>{JSON.stringify(userData, null, 2)}</Typography>
-
+{/* 
             {dashboardData && (
                     <pre>::dashboard2::{JSON.stringify(dashboardData, null, 2)}</pre>
-                )}
+                )} */}
             
             {errorMsg && (
                     <pre>::error::{JSON.stringify(errorMsg, null, 2)}</pre>

@@ -14,13 +14,7 @@ import SubmitEssayField from "../../components/appointments/SubmitEssayField";
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-
-const token = localStorage.getItem('token')
-
-const axiosInstance = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api/',
-    timeout: 1000,
-});
+import dayjs from 'dayjs'
 
 export default function SubmitEssay() {
     const [tutorOptions, setTutorOptions] = useState(null)
@@ -44,12 +38,48 @@ export default function SubmitEssay() {
 
     const navigate = useNavigate()
 
-    axiosInstance.interceptors.request.use((config) => {
+    function getTokenAsync() {
+        return new Promise((resolve) => {
+          const token = localStorage.getItem('token');
+          resolve(token);
+        });
+      }
+
+      const axiosInstance = axios.create({
+        baseURL: 'http://127.0.0.1:8000/api/',
+        timeout: 1000,
+    });
+
+    axiosInstance.interceptors.request.use(async (config) => {
+        const token = await getTokenAsync()
         if (token) {
             config.headers.Authorization = `Token ${token}`
         }
         return config
     })
+
+    useEffect(() => {
+        axiosInstance.get('/get-tutors')
+            .then(response => {
+                setTutorOptions(response.data)
+            })
+            .catch(error => {
+                if (error.response) {
+                    if (error.response.status === 401) {
+                        navigate('/login')
+                    }
+                }
+                console.error(error)
+            })
+    }, [navigate, axiosInstance])
+
+
+    //for duration_minutes field
+    const durationMap = {
+        1: 15,
+        2: 20,
+        3: 30
+    };
 
     const onSubmit = (data) => {
         console.log(data);
@@ -62,7 +92,7 @@ export default function SubmitEssay() {
             tutor_id: data.tutor_id,
             appointment: {
                 student_meeting_preference: data.student_meeting_preference,
-                duration_minutes: data.duration,
+                duration_minutes: durationMap[data.duration_minutes],
                 additional_comments: data.additional_comments,
                 date_time: data.date,
                 subject: data.subject,
@@ -106,19 +136,9 @@ export default function SubmitEssay() {
     };
 
     const handleTime = (value, context) => {
-        console.log(value.$d.getTime())
-
         setApptTime(value)
-        console.log(value)
-        const str = value.$d.toTimeString()
-        
-        console.log(value.$d.toTimeString())
-
-        const formattedTimeString= (str) => {
-            
-        }
-        console.log(formattedTimeString(str))
-        setDisplayTime()
+        const time = value.format('h:mm A')
+        setDisplayTime(time)
 
     };
 
@@ -128,19 +148,6 @@ export default function SubmitEssay() {
         console.log(essaySubmitMethod)
     };
     
-
-    useEffect(() => {
-        axiosInstance.get('/get-tutors')
-            .then(response => {
-                setTutorOptions(response.data)
-            })
-            .catch(error => {
-                if (error.response.status === 401) {
-                    navigate('/login')
-                }
-                console.error(error)
-            })
-    }, [navigate])
 
 
     //initialize form with react-hook-form
@@ -220,7 +227,7 @@ export default function SubmitEssay() {
                                         <DateCalendar label='Pick a Date' disablePast
                                         onChange={(value, context) => {
                                             handleDate(value, context)
-                                            if (watchedDate || apptTime) {
+                                            if (watchedDate && apptTime) {
                                                 const newValue = value.hour(apptTime.hour()).minute(apptTime.minute())
                                                 date_time.onChange(newValue)
                                             } else {
@@ -268,15 +275,15 @@ export default function SubmitEssay() {
                                 label='Minutes'
                                 options={[
                                     {
-                                    id: '1',
+                                    id: 1,
                                     label: '15',
                                     },
                                     {
-                                    id: '2',
+                                    id: 2,
                                     label: '20'
                                     },
                                     {
-                                    id: '3',
+                                    id : 3,
                                     label: '30'
                                     }
                                 ]}
@@ -325,7 +332,7 @@ export default function SubmitEssay() {
                         <TextFieldElement 
                             name='additional_comments'
                             label='What is this essay about?'
-                            sx={{ pb: 2, width: '33%' }}
+                            sx={{ pb: 2, width: '100%' }}
                             rows={3}
                             multiline
                             rules={{ required: "This field is required"}}

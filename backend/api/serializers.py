@@ -91,10 +91,11 @@ class LoginSerializer(serializers.Serializer):
 class ListTutorSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
+    email = serializers.EmailField(source='user.email')
     
     class Meta:
         model = Tutor
-        fields = ('id', 'first_name', 'last_name', 'subjects', 'bio', 'avatar', 'school' ,'user')
+        fields = ('id', 'first_name', 'last_name', 'subjects', 'bio', 'avatar', 'school' ,'user', 'email')
 
 class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -102,15 +103,21 @@ class AppointmentSerializer(serializers.ModelSerializer):
         fields = '__all__'
         extra_kwargs = {'student': {'required': False}, 'tutor': {'required': False}}
         
+class AppointmentUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = ['id', 'status']
         
 class UpcomingSessionsSerializer(serializers.ModelSerializer):
     tutor_first_name = serializers.CharField(source='tutor.user.first_name')
     tutor_last_name = serializers.CharField(source='tutor.user.last_name')
+    tutor_email = serializers.EmailField(source='tutor.user.email')
+
 
     class Meta:
         model = Appointment
         fields = ['id', 'student', 'tutor', 'subject', 'date_time', 'duration_minutes',
-                  'location', 'physical_location', 'status', 'tutor_first_name', 'tutor_last_name']
+                  'location', 'physical_location', 'status', 'tutor_first_name', 'tutor_last_name', 'tutor_email']
         
 
 class DashboardSerializer(serializers.Serializer):
