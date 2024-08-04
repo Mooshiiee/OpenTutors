@@ -44,10 +44,6 @@ export default function Dashboard() {
     const handleApptDialog = (appointment) => {
         setApptDialogData(appointment)
         setApptDialogOpen(true)
-        console.log('handleApptDialog ran')
-        console.log(apptDialogData)
-        console.log(apptDialogOpen)
-
     }
 
     //fetch HomeView when page loads 
@@ -63,7 +59,6 @@ export default function Dashboard() {
                 }
             });
             const localUsername = localStorage.getItem('username')
-            console.log(`dashboard/${localUsername}`)
             
             //API CALL :
             axiosInstance.get('dashboard/')

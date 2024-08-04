@@ -88,6 +88,12 @@ class LoginSerializer(serializers.Serializer):
         attrs['user'] = user
         return 
     
+class TutorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tutor
+        fields = '__all__'
+
+    
 class ListTutorSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
@@ -123,6 +129,10 @@ class UpcomingSessionsSerializer(serializers.ModelSerializer):
 class DashboardSerializer(serializers.Serializer):
     user = UserSerializer()
     tutors = ListTutorSerializer(many=True)
+    appointments = UpcomingSessionsSerializer(many=True)
+    
+class TutorDashboardSerializer(serializers.Serializer):
+    tutor = TutorSerializer()
     appointments = UpcomingSessionsSerializer(many=True)
 
 
@@ -167,6 +177,4 @@ class EssayAppointmentSerializer(serializers.ModelSerializer):
     
     
 
-
-#class EssayAppointmentSerializer2(serializers.Serializer):
 

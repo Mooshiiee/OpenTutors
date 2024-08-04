@@ -23,6 +23,7 @@ from api.serializers import (
     EssayAppointmentSerializer,
     DashboardSerializer,
     AppointmentUpdateSerializer,
+    TutorDashboardSerializer,
 )
 
 from knox import views as knoxviews
@@ -86,7 +87,7 @@ class DashboardView(APIView):
     def get(self, request):
         try:
             userProfile = UserProfile.objects.get(user=request.user)
-            upcomingSessions = Appointment.objects.filter(student=userProfile).exclude(date_time__lt=timezone.now())
+            upcomingSessions = Appointment.objects.filter(student=userProfile)
             tutors = Tutor.objects.all()
         
             data = {
@@ -144,13 +145,37 @@ class CreateEssayAppointmentView(CreateAPIView):
     authentication_classes = [TokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
 
+#ANY USER CAN MANGE ANY OTHER USERS APPOINTMENTS IF THEY ACCESS
+#THE API DIRECTLY. USE perform_update() WITH request.user TO FIRST
+#AUTHENTICATE Object LEVEL PERMISSION
 class UpdateAppointmentView(UpdateAPIView):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentUpdateSerializer
-    #authentication_classes = [TokenAuthentication, ]
-    #permission_classes = [IsAuthenticated, ]
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
     
-    
-    
-    
-    
+class TutorDashboardView(APIView):
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request):
+        try:
+            #get the Tutor instance using token
+            tutorProfile = Tutor.objects.get(user=request.user)
+            #get the sessions with with tutor object
+            sessions = Appointment.objects.filter(tutor=tutorProfile)
+            
+            #serialize
+            data = {
+                'tutor': tutorProfile,
+                'appointments': sessions
+            }
+            
+            serializer = TutorDashboardSerializer(data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+            
+        except ObjectDoesNotExist:
+            return Response({"error": "User profile not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 

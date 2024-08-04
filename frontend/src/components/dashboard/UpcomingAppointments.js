@@ -1,7 +1,10 @@
 import React from 'react';
 import { Typography, Box, Stack, Chip, Grid, Card, CardActionArea} from '@mui/material'
+
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
 import AppointmentCard from './AppointmentCard';
 
@@ -10,6 +13,7 @@ export default function UpcomingAppointments ( {appointments, handleApptDialog} 
     const [viewAll, setViewAll] = React.useState(false)
 
     dayjs.extend(utc)
+    dayjs.extend(isSameOrAfter)
     const formattedDateTime = (dateTimeString) => {
         const date = dayjs(dateTimeString)
         return (
@@ -17,9 +21,11 @@ export default function UpcomingAppointments ( {appointments, handleApptDialog} 
         )
     }
 
+
+
     //filter out 'appointments' into two seperate arrays
-    const scheduledAppointments = appointments.filter(appointment => appointment.status === 'scheduled')
-    const otherAppointments = appointments.filter(appointment => appointment.status !== 'scheduled')
+    const scheduledAppointments = appointments.filter(appointment => dayjs(appointment.date_time).isSameOrAfter(dayjs()))
+    const otherAppointments = appointments.filter(appointment => dayjs(appointment.date_time).isBefore(dayjs())) 
     //could possibly use a single loop to do this faster 
 
 
@@ -52,7 +58,7 @@ export default function UpcomingAppointments ( {appointments, handleApptDialog} 
                     </CardActionArea>
                 </Card>
                 {otherAppointments.map((appointment, index) => (
-                    <AppointmentCard appointment={appointment} index={index} handleApptDialog={handleApptDialog} />
+                    <AppointmentCard appointment={appointment} index={index} handleApptDialog={handleApptDialog} markScheduledAsComplete={true} />
                 ))}
                 </>
             ) : (

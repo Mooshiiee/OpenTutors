@@ -43,7 +43,7 @@ export default function SubmitEssay() {
           const token = localStorage.getItem('token');
           resolve(token);
         });
-      }
+    }
 
       const axiosInstance = axios.create({
         baseURL: 'http://127.0.0.1:8000/api/',
@@ -58,6 +58,8 @@ export default function SubmitEssay() {
         return config
     })
 
+    
+
     useEffect(() => {
         axiosInstance.get('/get-tutors')
             .then(response => {
@@ -71,7 +73,7 @@ export default function SubmitEssay() {
                 }
                 console.error(error)
             })
-    }, [navigate, axiosInstance])
+    }, [])
 
 
     //for duration_minutes field
@@ -271,7 +273,7 @@ export default function SubmitEssay() {
                                 <SelectElement
                                 required 
                                 sx={{width: 100, m: 2}}
-                                name='duration' 
+                                name='duration_minutes' 
                                 label='Minutes'
                                 options={[
                                     {

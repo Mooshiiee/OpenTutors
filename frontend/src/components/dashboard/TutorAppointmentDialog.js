@@ -13,9 +13,8 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { Box, Container, Grid, Rating, Stack, TextField, Typography, ratingClasses} from '@mui/material';
+import { Box, Grid, Stack, TextField, Typography} from '@mui/material';
 import axios from 'axios';
-import { replaceInvalidDateByNull } from '@mui/x-date-pickers/internals';
 
 function getLocalTokenPromise () {
     return new Promise((resolve, reject) => {
@@ -28,7 +27,7 @@ function getLocalTokenPromise () {
     })
 }
 
-export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setApptDialogOpen }) {
+export default function TutorAppointmentDialog({ apptDialogData, apptDialogOpen, setApptDialogOpen }) {
   const [confirmCancel, setConfirmCancel] = React.useState(false);
   const [loading, setLoading] = React.useState(false)
   const [errorMsg, setErrorMsg] = React.useState(null)
@@ -107,9 +106,11 @@ export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setA
         if (error.response) {
             if (error.response.status === 401) {
                 setErrorMsg('Your request could not be validated. Please login again.')
+                setLoading(false)
             }
         } else {
             setErrorMsg('Sorry, an issue occured with your request')
+            setLoading(false)
         }
     })
 
@@ -175,7 +176,25 @@ export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setA
         pb: 2
       }}>
 
+      {}
+
       {apptDialogData.status === 'scheduled' && dayjs(apptDialogData.date_time).isAfter(dayjs()) && (
+        <Stack>
+        <Typography variant='h5'>Post Session Form (Required)</Typography>
+        <TextField
+          label='Post Session Comments'
+        />
+        <Button 
+         variant='contained'
+        >
+        Submit  
+        </Button>
+        </Stack>
+          
+      
+      )}
+
+      {apptDialogData.status === 'scheduled' && (
         <Button variant="contained" color="error" disabled={confirmCancel}
             onClick={() => handleFirstCancel()}
         >
@@ -183,43 +202,10 @@ export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setA
         </Button>
       )}
 
-      {/* ADD ANOTHER CONDITION IF RATING ALREADY EXISTS IN DB */}
-      {apptDialogData.status !== 'cancelled' && dayjs(apptDialogData.date_time).isBefore(dayjs()) && (
-        <>
-            <Stack flexGrow={3}>
-            <Typography>Rate Your Tutor!</Typography>
-            <Rating name="tutor-rating" size="large"
-                    onChange={(event, value) => setRating(value)}
-            />
-            <Typography component='legend'>(Your rating can only be seen by the tutor)</Typography>
-            <br />
-            {rating && (
-                <>
-                <TextField
-                    id='rating-comment'
-                    multiline
-                    rows={4}
-                    label='Would you like to share a comment? (optional)'
-                    sx={{my: 2}}
-                />
-                <Button
-                    variant='contained'
-                    onClick={handleSubmitRating}
-                    color='secondary'
-                >
-                    Submit Rating
-                </Button>
-                </>
-            )}
-            </Stack>
-
-
-        </>
-      )}
-
       </DialogActions>
         { confirmCancel && (
-            <Box
+            <Stack
+
                 sx={{
                     my:1,
                     justifyContent: 'center', 
@@ -230,6 +216,11 @@ export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setA
                 
             >
                 <Typography>Are you sure?</Typography>
+                <TextField 
+                    id='cancel-reason'
+                    label='Reason for Cancellation?'
+                    sx={{my: 2}}
+                />
                 <Button variant='contained' 
                     onClick={() => setConfirmCancel(false)}
                     sx={{ m: 1 }}
@@ -251,7 +242,11 @@ export default function AppointmentDialog({ apptDialogData, apptDialogOpen, setA
                     Yes, Cancel Appointment
                 </span>
                 </LoadingButton>
-            </Box>
+
+                {errorMsg && (
+                    <Typography> {errorMsg} </Typography>
+                )}
+            </Stack>
           )
         }
     </Dialog>

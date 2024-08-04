@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 
 
-export default function AppointmentCard ( {index, appointment, handleApptDialog} ) {
+export default function AppointmentCard ( {index, appointment, handleApptDialog, markScheduledAsComplete, markScheduledAsPostSubmission} ) {
     
     dayjs.extend(utc)
     const formattedDateTime = (dateTimeString) => {
@@ -30,22 +30,31 @@ export default function AppointmentCard ( {index, appointment, handleApptDialog}
         return 'warning'
     }
 
+    function handleCardClick (appointment, markScheduledAsPostSubmission) {
+        if (markScheduledAsPostSubmission) {
+            //handle post submission dialog
+            handleApptDialog(appointment, markScheduledAsPostSubmission)
+        } else {
+            handleApptDialog(appointment)
+        }
+    }
+
     return (
         <Card key={index} elevation={0} sx={{ bgcolor: 'grey.200', borderRadius: 3, mb: 1 }}>
             <CardActionArea
                 sx={{p: 1}} 
-                onClick={() => handleApptDialog(appointment)}
+                onClick={() => handleCardClick(appointment)}
             >
             <Grid container spacing={2} direction='row'>
                 <Grid 
-                item 
-                container 
-                direction='column' 
-                justifyContent="center" 
-                alignItems="flex-start"
-                xs={7}  // Full width on extra small screens
-                sm={7}   // 2/3 width on small screens and up
-                md={8}   // 3/4 width on medium screens and up
+                    item 
+                    container 
+                    direction='column' 
+                    justifyContent="center" 
+                    alignItems="flex-start"
+                    xs={7}  // Full width on extra small screens
+                    sm={7}   // 2/3 width on small screens and up
+                    md={8}   // 3/4 width on medium screens and up
                 >
                     <Grid item>
                         <Stack 
@@ -56,11 +65,28 @@ export default function AppointmentCard ( {index, appointment, handleApptDialog}
                             <Typography fontWeight="bold" align='left' pl={1}>
                             {appointment.tutor_first_name} {appointment.tutor_last_name} 
                             </Typography>
-                            <Chip 
-                                label={appointment.status} 
-                                color={chipColorFromStatus(appointment.status)}
+
+
+                            {markScheduledAsPostSubmission && appointment.status === 'scheduled' ? (
+                                <Chip 
+                                label='Finish Post Session!'
+                                color='warning'
                                 size="small"
                             />
+                            ) : markScheduledAsComplete && appointment.status === 'scheduled' ? (
+                                <Chip 
+                                    label='complete'
+                                    color='info'
+                                    size="small"
+                                />
+                            ) : (
+                                <Chip 
+                                    label={appointment.status} 
+                                    color={chipColorFromStatus(appointment.status)}
+                                    size="small"
+                                />
+                            )}
+
                         </Stack>
                     </Grid>
                     <Grid item>
