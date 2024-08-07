@@ -112,7 +112,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
 class AppointmentUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
-        fields = ['id', 'status']
+        fields = ['id', 'status', 'post_session_comment']
         
 class UpcomingSessionsSerializer(serializers.ModelSerializer):
     tutor_first_name = serializers.CharField(source='tutor.user.first_name')
@@ -135,7 +135,11 @@ class TutorDashboardSerializer(serializers.Serializer):
     tutor = TutorSerializer()
     appointments = UpcomingSessionsSerializer(many=True)
 
-
+'''
+FOR CREATING/UPDATING ESSAY APPOINTMENT
+Custom create() and update() is to put in the tutor and user instances
+on object creation
+'''
 class EssayAppointmentSerializer(serializers.ModelSerializer):
     appointment = AppointmentSerializer()
     student_username = serializers.CharField(max_length=150, write_only=True)

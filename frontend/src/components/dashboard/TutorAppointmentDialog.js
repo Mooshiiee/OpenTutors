@@ -10,11 +10,16 @@ import CloseIcon from '@mui/icons-material/Close';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import EastIcon from '@mui/icons-material/East';
 
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { Box, Grid, Stack, TextField, Typography} from '@mui/material';
+
+import { Grid, Stack, TextField, Typography} from '@mui/material';
 import axios from 'axios';
+
+import TutorPostSubmission from '../tutor/TutorPostSubmission';
+
 
 function getLocalTokenPromise () {
     return new Promise((resolve, reject) => {
@@ -93,26 +98,32 @@ export default function TutorAppointmentDialog({ apptDialogData, apptDialogOpen,
     console.log(formData)
     console.log(formJson)
 
-    axiosInstance.patch(`update-appointment/${apptDialogData.id}/`, {
+    if (confirmCancel) {
+      axiosInstance.patch(`update-appointment/${apptDialogData.id}/`, {
         status: 'cancelled'
-    })
-    .then(response => {
-        if (response.status === 200) {
-            handleConfirmedCancel()
-        }
-    })
-    .catch(error => {
-        console.error(error)
-        if (error.response) {
-            if (error.response.status === 401) {
-                setErrorMsg('Your request could not be validated. Please login again.')
-                setLoading(false)
-            }
-        } else {
-            setErrorMsg('Sorry, an issue occured with your request')
-            setLoading(false)
-        }
-    })
+      })
+      .then(response => {
+          if (response.status === 200) {
+              handleConfirmedCancel()
+          }
+      })
+      .catch(error => {
+          console.error(error)
+          if (error.response) {
+              if (error.response.status === 401) {
+                  setErrorMsg('Your request could not be validated. Please login again.')
+                  setLoading(false)
+              }
+          } else {
+              setErrorMsg('Sorry, an issue occured with your request')
+              setLoading(false)
+          }
+      })
+    } else {
+      console.log('else ran for post submission')
+    }
+
+
 
    }
 
@@ -178,23 +189,14 @@ export default function TutorAppointmentDialog({ apptDialogData, apptDialogOpen,
 
       {}
 
-      {apptDialogData.status === 'scheduled' && dayjs(apptDialogData.date_time).isAfter(dayjs()) && (
-        <Stack>
-        <Typography variant='h5'>Post Session Form (Required)</Typography>
-        <TextField
-          label='Post Session Comments'
-        />
-        <Button 
-         variant='contained'
-        >
-        Submit  
-        </Button>
+      {apptDialogData.status === 'scheduled' && dayjs(apptDialogData.date_time).isBefore(dayjs()) && (
+        <Stack flexGrow={1}>
+        <Typography variant='h5' m={2}>Post Session Form (Required)</Typography>
+        <TutorPostSubmission loading={loading} id={apptDialogData.id} />
         </Stack>
-          
-      
       )}
 
-      {apptDialogData.status === 'scheduled' && (
+      {apptDialogData.status === 'scheduled' && dayjs(apptDialogData.date_time).isAfter(dayjs()) && (
         <Button variant="contained" color="error" disabled={confirmCancel}
             onClick={() => handleFirstCancel()}
         >

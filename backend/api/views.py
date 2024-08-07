@@ -148,13 +148,22 @@ class CreateEssayAppointmentView(CreateAPIView):
 #ANY USER CAN MANGE ANY OTHER USERS APPOINTMENTS IF THEY ACCESS
 #THE API DIRECTLY. USE perform_update() WITH request.user TO FIRST
 #AUTHENTICATE Object LEVEL PERMISSION
-class UpdateAppointmentView(UpdateAPIView):
+class StudentUpdateAppointmentView(UpdateAPIView):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentUpdateSerializer
     authentication_classes = [TokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
-
     
+#ANY USER CAN MANGE ANY OTHER USERS APPOINTMENTS IF THEY ACCESS
+#THE API DIRECTLY. USE perform_update() WITH request.user TO FIRST
+#AUTHENTICATE Object LEVEL PERMISSION
+class TutorUpdateAppointmentView(UpdateAPIView):
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentUpdateSerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+    
+
 class TutorDashboardView(APIView):
     authentication_classes = [TokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]

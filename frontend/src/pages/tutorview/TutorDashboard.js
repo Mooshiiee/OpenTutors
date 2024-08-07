@@ -20,7 +20,8 @@ export default function TutorDashboard () {
         });
     }
 
-    const handleApptDialog = (appointment, markScheduledAsPostSubmission) => {
+    const handleApptDialog = (appointment) => {
+        //if (markScheduledAsPostSubmission) {}
         setApptDialogData(appointment)
         setApptDialogOpen(true)
         console.log('handleApptDialog ran')
@@ -126,8 +127,6 @@ export default function TutorDashboard () {
                 apptDialogData={apptDialogData}
                 apptDialogOpen={apptDialogOpen}
                 setApptDialogOpen={setApptDialogOpen}
-
-
             />
 
         </ThemeProvider>

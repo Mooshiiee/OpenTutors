@@ -77,10 +77,12 @@ class Appointment(models.Model):
         ('scheduled', 'Scheduled'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
+        ('no-show', 'No-Show')
     ])
     
     virtual_link = models.URLField(null=True)
     additional_comments = models.TextField(null=True)
+    post_session_comment = models.TextField(null=True)
     
 class EssayAppointment(models.Model):
     appointment = models.OneToOneField(Appointment, 

@@ -172,7 +172,7 @@ export default function SubmitEssay() {
     //useWatch statements 
     const watchedTime = useWatch({ control, name: 'time' })
     const watchedDate = useWatch({ control, name: 'date' })
-    const duration = watch("duration");
+    const duration_minutes = watch("duration_minutes");
     const meetingPreference = watch("student_meeting_preference");
 
     const subject = watch('subject');
@@ -310,7 +310,7 @@ export default function SubmitEssay() {
 
                         </Stack>
                             <Button variant="outlined" 
-                            disabled={!apptDate || !apptTime || !duration || !meetingPreference} 
+                            disabled={!apptDate || !apptTime || !duration_minutes || !meetingPreference} 
                             onClick={() => {setStepTwo(true)}}>
                                 next
                             </Button>
@@ -334,7 +334,7 @@ export default function SubmitEssay() {
                         <TextFieldElement 
                             name='additional_comments'
                             label='What is this essay about?'
-                            sx={{ pb: 2, width: '100%' }}
+                            sx={{ pb: 2, width: '80%' }}
                             rows={3}
                             multiline
                             rules={{ required: "This field is required"}}
