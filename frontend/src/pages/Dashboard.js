@@ -36,6 +36,7 @@ export default function Dashboard() {
     const [errorMsg, setErrorMsg] = useState(null);
     const [dashboardData, setDashboardData] = useState([])
 
+    //the data and open condition for appointment dialog
     const [apptDialogData, setApptDialogData] = useState(false)
     const [apptDialogOpen, setApptDialogOpen] = useState()
 

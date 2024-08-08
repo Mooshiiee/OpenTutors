@@ -6,6 +6,7 @@ import axios from "axios";
 
 import TutorAppointmentDialog from "../../components/dashboard/TutorAppointmentDialog";
 import TutorUpcomingAppointments from "../../components/tutor/TutorUpcomingAppointments";
+import SuccessRefreshDialog from "../../components/SuccessRefreshDialog";
 
 export default function TutorDashboard () {
     const [appointments, setAppointments] = React.useState([])
@@ -13,12 +14,25 @@ export default function TutorDashboard () {
     const [apptDialogOpen, setApptDialogOpen] = React.useState()
 
 
+    //the open condition of success dialog
+    const [successDialog, setSuccessDialog] = React.useState(false)
+
     function getTokenAsync() {
         return new Promise((resolve) => {
           const token = localStorage.getItem('token');
           resolve(token);
         });
     }
+
+    const handleClose = (refresh) => {
+        setApptDialogOpen(false);
+    };
+
+    const handleRefreshClose = () => {
+        setApptDialogOpen(false)
+        setSuccessDialog(true)
+    }
+
 
     const handleApptDialog = (appointment) => {
         //if (markScheduledAsPostSubmission) {}
@@ -102,6 +116,12 @@ export default function TutorDashboard () {
                                 >
                                     Create a Blog Post 
                                 </Button>
+                                <Button variant="contained" color="info"
+                                        sx={{m:1}}
+                                        onClick={() => {setSuccessDialog(true)}}
+                                >
+                                    test success dialog
+                                </Button>
                             </Paper>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12}>
@@ -127,6 +147,13 @@ export default function TutorDashboard () {
                 apptDialogData={apptDialogData}
                 apptDialogOpen={apptDialogOpen}
                 setApptDialogOpen={setApptDialogOpen}
+                handleClose={handleClose}
+                handleRefreshClose={handleRefreshClose}
+            />
+
+            <SuccessRefreshDialog
+                successDialog={successDialog}
+                setSuccessDialog={setSuccessDialog}
             />
 
         </ThemeProvider>

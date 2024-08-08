@@ -118,12 +118,14 @@ class UpcomingSessionsSerializer(serializers.ModelSerializer):
     tutor_first_name = serializers.CharField(source='tutor.user.first_name')
     tutor_last_name = serializers.CharField(source='tutor.user.last_name')
     tutor_email = serializers.EmailField(source='tutor.user.email')
-
-
+    student_first_name = serializers.CharField(source='student.user.first_name')
+    student_last_name = serializers.CharField(source='student.user.last_name')
+    
     class Meta:
         model = Appointment
         fields = ['id', 'student', 'tutor', 'subject', 'date_time', 'duration_minutes',
-                  'location', 'physical_location', 'status', 'tutor_first_name', 'tutor_last_name', 'tutor_email']
+                  'location', 'physical_location', 'status', 'tutor_first_name', 'tutor_last_name', 
+                  'tutor_email', 'student_first_name', 'student_last_name']
         
 
 class DashboardSerializer(serializers.Serializer):

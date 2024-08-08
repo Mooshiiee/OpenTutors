@@ -48,11 +48,22 @@ export default function TutorUpcomingAppointments ( {appointments, handleApptDia
         >
             
             {postSessionAppoinments.map((appointment, index) => (
-                <AppointmentCard appointment={appointment} index={index} handleApptDialog={handleApptDialog} markScheduledAsPostSubmission={true}  />
+                <AppointmentCard 
+                    appointment={appointment} 
+                    index={index} 
+                    handleApptDialog={handleApptDialog} 
+                    markScheduledAsPostSubmission={true}
+                    showStudentName={true}  
+                />
             ))}
 
             {scheduledAppointments.map((appointment, index) => (
-                <AppointmentCard appointment={appointment} index={index} handleApptDialog={handleApptDialog} />
+                <AppointmentCard 
+                    appointment={appointment} 
+                    ndex={index} 
+                    handleApptDialog={handleApptDialog} 
+                    showStudentName={true}
+                />
             ))}
 
             {viewAll ? (
@@ -70,7 +81,11 @@ export default function TutorUpcomingAppointments ( {appointments, handleApptDia
                     </CardActionArea>
                 </Card>
                 {otherAppointments.map((appointment, index) => (
-                    <AppointmentCard appointment={appointment} index={index} handleApptDialog={handleApptDialog} />
+                    <AppointmentCard 
+                        appointment={appointment} 
+                        index={index} 
+                        handleApptDialog={handleApptDialog}
+                        showStudentName={true} />
                 ))}
                 </>
             ) : (

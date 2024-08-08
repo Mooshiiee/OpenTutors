@@ -32,7 +32,7 @@ function getLocalTokenPromise () {
     })
 }
 
-export default function TutorAppointmentDialog({ apptDialogData, apptDialogOpen, setApptDialogOpen }) {
+export default function TutorAppointmentDialog({ apptDialogData, apptDialogOpen, setApptDialogOpen, setSuccessDialog, handleClose, handleRefreshClose}) {
   const [confirmCancel, setConfirmCancel] = React.useState(false);
   const [loading, setLoading] = React.useState(false)
   const [errorMsg, setErrorMsg] = React.useState(null)
@@ -50,13 +50,6 @@ export default function TutorAppointmentDialog({ apptDialogData, apptDialogOpen,
     return `${apptDialogData.tutor_first_name} ${apptDialogData.tutor_last_name}`
   }
 
-  const handleClose = () => {
-    setApptDialogOpen(false);
-    setConfirmCancel(false)
-    setRating(null)
-  };
-
-
   const handleFirstCancel = () => {
     setConfirmCancel(true)
   }
@@ -66,7 +59,9 @@ export default function TutorAppointmentDialog({ apptDialogData, apptDialogOpen,
     setLoading(true)
     setTimeout(() => {
         setLoading(false)
-        handleClose() 
+        setConfirmCancel(false)
+        setRating(null)
+        handleRefreshClose()
     }, 2000);
   }
 
@@ -85,8 +80,12 @@ export default function TutorAppointmentDialog({ apptDialogData, apptDialogOpen,
 
   const handleSubmitRating = () => {
     console.log(rating)
-    //API logic for seting the rating 
-    handleClose()
+    //API logic for seting the rating
+    setConfirmCancel(false)
+    setRating(null) 
+    setConfirmCancel(false)
+    setRating(null)
+    handleRefreshClose()
   }
 
   const handleSubmit = (event) => {
@@ -131,7 +130,11 @@ export default function TutorAppointmentDialog({ apptDialogData, apptDialogOpen,
   return (
     <Dialog
       open={apptDialogOpen}
-      onClose={handleClose}
+      onClose={() => {
+        setConfirmCancel(false)
+        setRating(null)
+        handleClose()
+      }}
       PaperProps={{
         component: 'form',
         onSubmit: handleSubmit,
@@ -141,7 +144,11 @@ export default function TutorAppointmentDialog({ apptDialogData, apptDialogOpen,
         Details 
         <IconButton
           aria-label="close"
-          onClick={handleClose}
+          onClick={() => {
+            setConfirmCancel(false)
+            setRating(null)
+            handleClose()
+          }}
           sx={{
             position: 'absolute',
             right: 8,
@@ -192,7 +199,7 @@ export default function TutorAppointmentDialog({ apptDialogData, apptDialogOpen,
       {apptDialogData.status === 'scheduled' && dayjs(apptDialogData.date_time).isBefore(dayjs()) && (
         <Stack flexGrow={1}>
         <Typography variant='h5' m={2}>Post Session Form (Required)</Typography>
-        <TutorPostSubmission loading={loading} id={apptDialogData.id} />
+        <TutorPostSubmission id={apptDialogData.id} handleRefreshClose={handleRefreshClose} />
         </Stack>
       )}
 

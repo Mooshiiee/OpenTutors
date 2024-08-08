@@ -6,10 +6,11 @@ import Select from '@mui/material/Select'
 import EastIcon from "@mui/icons-material/East";
 import axios from "axios";
 
-export default function TutorPostSubmission ( {loading, id} ) {
+export default function TutorPostSubmission ( {id, handleRefreshClose} ) {
 
     const [attendance, setAttendance] = React.useState('')
     const [comment, setComment] = React.useState('')
+    const [loading, setLoading] = React.useState(false)
 
     function getTokenAsync () {
         return new Promise((resolve, reject) => {
@@ -43,21 +44,39 @@ export default function TutorPostSubmission ( {loading, id} ) {
         }
         return config
     })
-
+    
+    const disabledCondition = () => {
+        if (attendance) {
+            if (attendance === 'completed' && comment === '') {
+                return true
+            }
+            return false
+        } 
+        return true
+    }
 
     const handleFormSubmit = () => {
-        axiosInstance.patch(`tutor-update-appointment/${id}`, {
-            status: attendance,
-            post_session_comments: comment
-        })
+
+        setLoading(true)
+        const data = { status: attendance}
+        if (attendance === 'completed') {
+            data.post_session_comment = comment
+        }
+        console.log(data)
+
+        axiosInstance.patch(`tutor-update-appointment/${id}/`, data)
         .then(response => {
             if (response.status === 200) {
-                console.log('good res')
+                setLoading(false)
+                handleRefreshClose()
             }
         })
         .catch(error => {
             console.error(error)
+            setLoading(false)
         })
+
+
     }
 
 return (
@@ -83,8 +102,9 @@ return (
             <TextField
             id='post-comments'
             label='Post Session Comments'
-            value={comment}
-            onChange={(event) => {setComment(event.target.value)}}
+            onChange={(event) => {
+                setComment(event.target.value)
+            }}
             sx={{my:2}}
             multiline
             rows={2}
@@ -94,11 +114,12 @@ return (
         <LoadingButton 
           sx={{ m: 1 }}
           variant="contained" 
-          onClick={() => console.log('post sub on click submit')}
+          onClick={handleFormSubmit}
           endIcon={<EastIcon />}
           loading={loading}
           loadingPosition="end"
           color={submitButtonColor}
+          disabled={disabledCondition()}
         >
           <span>
             {submitButtonLabel}

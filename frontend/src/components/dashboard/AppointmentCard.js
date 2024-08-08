@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 
 
-export default function AppointmentCard ( {index, appointment, handleApptDialog, markScheduledAsComplete, markScheduledAsPostSubmission} ) {
+export default function AppointmentCard ( {index, appointment, handleApptDialog, markScheduledAsComplete, markScheduledAsPostSubmission, showStudentName} ) {
     
     dayjs.extend(utc)
     const formattedDateTime = (dateTimeString) => {
@@ -62,10 +62,16 @@ export default function AppointmentCard ( {index, appointment, handleApptDialog,
                             spacing={{ xs: 1, sm: 3 }}
                             sx={{ mt: 1 }}
                         >
-                            <Typography fontWeight="bold" align='left' pl={1}>
-                            {appointment.tutor_first_name} {appointment.tutor_last_name} 
-                            </Typography>
 
+                            { showStudentName === true ? (
+                                <Typography fontWeight="bold" align='left' pl={1}>
+                                    {appointment.student_first_name} {appointment.student_last_name}      
+                                </Typography>
+                            ) : (
+                                <Typography fontWeight="bold" align='left' pl={1}>
+                                    {appointment.tutor_first_name} {appointment.tutor_last_name}      
+                                </Typography>
+                            )}
 
                             {markScheduledAsPostSubmission && appointment.status === 'scheduled' ? (
                                 <Chip 
