@@ -19,5 +19,14 @@ urlpatterns = [
     path(r'create-essay-appt/', views.CreateEssayAppointmentView.as_view(), name='create-essay-appt'),
     path(r'update-appointment/<int:pk>/', views.StudentUpdateAppointmentView.as_view(), name='update-appointment'),
     path(r'tutor-dashboard', views.TutorDashboardView.as_view(), name='tutor-dashboard'),
-    path(r'tutor-update-appointment/<int:pk>/', views.TutorUpdateAppointmentView.as_view(), name='tutor-update-appointment')
+    path(r'tutor-update-appointment/<int:pk>/', views.TutorUpdateAppointmentView.as_view(), name='tutor-update-appointment'),
+    path(r'get-timeslots', views.GetTutorAvailabilityView.as_view(), name='get-timeslots'),
+    path(r'add-timeslot', views.AddTutorAvailabilityView.as_view(), name='add-timeslots'),
+    path(r'delete-timeslot/<int:pk>/', views.DeleteTutorAvailability.as_view(), name='add-timeslots'),
+
+    
+
+    
+
+    
 ]   

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, UserProfile, Tutor, Appointment, EssayAppointment 
+from .models import User, UserProfile, Tutor, Appointment, EssayAppointment, TutorAvailability
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -127,6 +127,11 @@ class UpcomingSessionsSerializer(serializers.ModelSerializer):
                   'location', 'physical_location', 'status', 'tutor_first_name', 'tutor_last_name', 
                   'tutor_email', 'student_first_name', 'student_last_name']
         
+class TutorAvailabilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TutorAvailability
+        fields = ['tutor', 'id', 'day', 'start_time', 'end_time']
+    
 
 class DashboardSerializer(serializers.Serializer):
     user = UserSerializer()
@@ -136,6 +141,8 @@ class DashboardSerializer(serializers.Serializer):
 class TutorDashboardSerializer(serializers.Serializer):
     tutor = TutorSerializer()
     appointments = UpcomingSessionsSerializer(many=True)
+    timeslots = TutorAvailabilitySerializer(many=True)
+
 
 '''
 FOR CREATING/UPDATING ESSAY APPOINTMENT
@@ -181,6 +188,6 @@ class EssayAppointmentSerializer(serializers.ModelSerializer):
                 appointment_serializer.save()
         return super().update(instance, validated_data)
     
-    
+
 
 

@@ -30,19 +30,21 @@ class Tutor(models.Model):
     altAvatar_image = models.ImageField(default='')
     school = models.TextField()
     
+        
+    
 class TutorAvailability(models.Model):
-    tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE, related_name='availability')
     
     DAYS_OF_WEEK = [
-        (0, 'Monday'),
-        (1, 'Tuesday'),
-        (2, 'Wednesday'),
-        (3, 'Thursday'),
-        (4, 'Friday'),
-        (5, 'Saturday'),
-        (6, 'Sunday'),
+        (0, 'Sunday'),
+        (1, 'Monday'),
+        (2, 'Tuesday'),
+        (3, 'Wednesday'),
+        (4, 'Thursday'),
+        (5, 'Friday'),
+        (6, 'Saturday'),
     ]
 
+    tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE, related_name='availability')
     day = models.IntegerField(choices=DAYS_OF_WEEK)
     start_time = models.TimeField()
     end_time = models.TimeField()
@@ -102,6 +104,3 @@ class SessionAppointment(models.Model):
     student_work_file = models.FileField()
     student_work_link = models.URLField()
     tutor_feedback = models.TextField
-
-
-    

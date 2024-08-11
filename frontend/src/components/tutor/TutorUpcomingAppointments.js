@@ -14,6 +14,7 @@ export default function TutorUpcomingAppointments ( {appointments, handleApptDia
 
     dayjs.extend(utc)
     dayjs.extend(isSameOrAfter)
+    
     const formattedDateTime = (dateTimeString) => {
         const date = dayjs(dateTimeString)
         return (
@@ -48,9 +49,9 @@ export default function TutorUpcomingAppointments ( {appointments, handleApptDia
         >
             
             {postSessionAppoinments.map((appointment, index) => (
-                <AppointmentCard 
-                    appointment={appointment} 
-                    index={index} 
+                <AppointmentCard
+                    key={appointment.id}
+                    appointment={appointment}
                     handleApptDialog={handleApptDialog} 
                     markScheduledAsPostSubmission={true}
                     showStudentName={true}  
@@ -59,8 +60,8 @@ export default function TutorUpcomingAppointments ( {appointments, handleApptDia
 
             {scheduledAppointments.map((appointment, index) => (
                 <AppointmentCard 
+                    key={appointment.id}
                     appointment={appointment} 
-                    ndex={index} 
                     handleApptDialog={handleApptDialog} 
                     showStudentName={true}
                 />
@@ -82,8 +83,8 @@ export default function TutorUpcomingAppointments ( {appointments, handleApptDia
                 </Card>
                 {otherAppointments.map((appointment, index) => (
                     <AppointmentCard 
-                        appointment={appointment} 
-                        index={index} 
+                        key={appointment.id}
+                        appointment={appointment}
                         handleApptDialog={handleApptDialog}
                         showStudentName={true} />
                 ))}

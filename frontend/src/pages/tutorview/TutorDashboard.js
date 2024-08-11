@@ -7,15 +7,32 @@ import axios from "axios";
 import TutorAppointmentDialog from "../../components/dashboard/TutorAppointmentDialog";
 import TutorUpcomingAppointments from "../../components/tutor/TutorUpcomingAppointments";
 import SuccessRefreshDialog from "../../components/SuccessRefreshDialog";
+import TutorAvailabilityList from "../../components/tutor/TutorAvailabilityList";
+import AvailabilityAddDialog from "../../components/tutor/AvailabilityAddDialog";
+import DeleteTimeslotConfirmationDialog from "../../components/DeleteTimeslotConfirmationDialog";
+
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
+import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
+
+import axiosInstance from "../../utils/axiosInstance";
 
 export default function TutorDashboard () {
     const [appointments, setAppointments] = React.useState([])
     const [apptDialogData, setApptDialogData] = React.useState(false)
     const [apptDialogOpen, setApptDialogOpen] = React.useState()
 
-
     //the open condition of success dialog
     const [successDialog, setSuccessDialog] = React.useState(false)
+
+    //the open condition of add-availability dialog
+    const [timeSlotDialog, setTimeSlotDialog] = React.useState(false)
+    //the currently selected timeslot
+    const [singleTimeslot, setSingleTimeslot] = React.useState([])
+    //the list of timeslots
+    const [timeslots, setTimeslots] = React.useState([])
+
+    //the open condition of timeslot confirm delete dialog
+    const [confirmDelete, setConfirmDelete] = React.useState(false)
 
     function getTokenAsync() {
         return new Promise((resolve) => {
@@ -30,7 +47,9 @@ export default function TutorDashboard () {
 
     const handleRefreshClose = () => {
         setApptDialogOpen(false)
-        setSuccessDialog(true)
+        setTimeSlotDialog(false)
+        fetchDashboardData()
+        //window.location.reload(); // This will refresh the page
     }
 
 
@@ -44,30 +63,37 @@ export default function TutorDashboard () {
 
     }
     
-    const axiosInstance = axios.create({
-        baseURL: 'http://127.0.0.1:8000/api/',
-        timeout: 1000,
-    });
+    // const axiosInstance = axios.create({
+    //     baseURL: 'http://127.0.0.1:8000/api/',
+    //     timeout: 1000,
+    // });
 
-    axiosInstance.interceptors.request.use(async (config) => {
-        const token = await getTokenAsync()
-        if (token) {
-            config.headers.Authorization = `Token ${token}`
-        }
-        return config
-    })
+    // axiosInstance.interceptors.request.use(async (config) => {
+    //     const token = await getTokenAsync()
+    //     if (token) {
+    //         config.headers.Authorization = `Token ${token}`
+    //     }
+    //     return config
+    // })
 
-    useEffect( () => {
+    const fetchDashboardData = () => {
         axiosInstance.get('/tutor-dashboard')
         .then(response => {
             if (response.status === 200) {
                 setAppointments(response.data.appointments)
+                setTimeslots(response.data.timeslots)
+
                 console.log(response)
             }
         })
         .catch(error => {
             console.error(error)
         })
+    }
+
+
+    useEffect( () => {
+        fetchDashboardData()
     }, [])
 
 
@@ -82,6 +108,15 @@ export default function TutorDashboard () {
           },
           info: {
             main: '#ffe37a',
+          },
+          warning: {
+            main: '#F05457'
+          },
+          success: {
+            main: '#99cc99'
+          },
+          error: {
+            main: '#E96E88'
           }
         },
     });
@@ -94,18 +129,23 @@ export default function TutorDashboard () {
                         <Grid item xs={12} sm={6} md={6}>
                             <Paper elevation={12} sx={{ padding: '16px', textAlign: 'center',
                             m: '4px'}}>
-                                <Typography variant="h5"> Tutor Dashboard</Typography>
+                                <Typography 
+                                    variant="h5"
+                                    gutterBottom
+                                > 
+                                    Tutor Dashboard
+                                </Typography>
+                                <Button variant="contained" color="secondary"
+                                        sx={{my:1}}
+                                >
+                                    Edit Profile
+                                </Button>
                             </Paper>
                         </Grid>
                         <Grid item xs={12} sm={6} md={6}>
                             <Paper elevation={12} sx={{ padding: '16px', textAlign: 'center',
                                    m: '4px'}}
                             >
-                                <Button variant="contained" color="secondary"
-                                        sx={{m:1}}
-                                >
-                                    Edit Profile
-                                </Button>
                                 <Button variant="contained" color="primary"
                                         sx={{m:1}}
                                 >
@@ -115,12 +155,6 @@ export default function TutorDashboard () {
                                         sx={{m:1}}
                                 >
                                     Create a Blog Post 
-                                </Button>
-                                <Button variant="contained" color="info"
-                                        sx={{m:1}}
-                                        onClick={() => {setSuccessDialog(true)}}
-                                >
-                                    test success dialog
                                 </Button>
                             </Paper>
                         </Grid>
@@ -137,6 +171,30 @@ export default function TutorDashboard () {
                                     m: '4px'}}
                             >
                                 <Typography variant="h5">Your Time Slots</Typography>
+                                <Button
+                                    variant="contained"
+                                    endIcon={<ControlPointIcon />}
+                                    color="secondary"
+                                    sx={{m: 1}}
+                                    onClick={() => setTimeSlotDialog(true)}
+                                >
+                                    Add a time slot 
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    endIcon={<FlightTakeoffIcon />}
+                                    color="info"
+                                    sx={{m: 1}}
+                                >
+                                    Toggle Break
+                                </Button>
+
+                                <TutorAvailabilityList 
+                                    timeslots={timeslots} 
+                                    setConfirmDelete={setConfirmDelete}
+                                    singleTimeslot={singleTimeslot} 
+                                    setSingleTimeslot={setSingleTimeslot}
+                                />
                             </Paper>
                         </Grid>
                     </Grid>
@@ -154,6 +212,19 @@ export default function TutorDashboard () {
             <SuccessRefreshDialog
                 successDialog={successDialog}
                 setSuccessDialog={setSuccessDialog}
+            />
+
+            <AvailabilityAddDialog 
+                open={timeSlotDialog}
+                setOpen={setTimeSlotDialog}
+                handleRefreshClose={handleRefreshClose}
+            />
+            
+            <DeleteTimeslotConfirmationDialog
+                open={confirmDelete}
+                setOpen={setConfirmDelete}
+                data={singleTimeslot}
+                fetchDashboardData={fetchDashboardData}
             />
 
         </ThemeProvider>

@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 
 
-export default function AppointmentCard ( {index, appointment, handleApptDialog, markScheduledAsComplete, markScheduledAsPostSubmission, showStudentName} ) {
+export default function AppointmentCard ( {appointment, handleApptDialog, markScheduledAsComplete, markScheduledAsPostSubmission, showStudentName} ) {
     
     dayjs.extend(utc)
     const formattedDateTime = (dateTimeString) => {
@@ -40,7 +40,7 @@ export default function AppointmentCard ( {index, appointment, handleApptDialog,
     }
 
     return (
-        <Card key={index} elevation={0} sx={{ bgcolor: 'grey.200', borderRadius: 3, mb: 1 }}>
+        <Card elevation={0} sx={{ bgcolor: 'grey.200', borderRadius: 3, mb: 1 }}>
             <CardActionArea
                 sx={{p: 1}} 
                 onClick={() => handleCardClick(appointment)}

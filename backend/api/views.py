@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, DestroyAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
@@ -8,10 +8,11 @@ from rest_framework import status
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.generics import RetrieveAPIView
 from django.shortcuts import get_object_or_404
-from api.models import UserProfile, Tutor, Appointment, EssayAppointment
+from api.models import UserProfile, Tutor, Appointment, EssayAppointment, TutorAvailability
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 
+from api.permissions import IsStudentOwner, IsTutorOwner
 
 from api.serializers import (
     CreateUserSerializer, 
@@ -24,6 +25,7 @@ from api.serializers import (
     DashboardSerializer,
     AppointmentUpdateSerializer,
     TutorDashboardSerializer,
+    TutorAvailabilitySerializer
 )
 
 from knox import views as knoxviews
@@ -145,25 +147,20 @@ class CreateEssayAppointmentView(CreateAPIView):
     authentication_classes = [TokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
 
-#ANY USER CAN MANGE ANY OTHER USERS APPOINTMENTS IF THEY ACCESS
-#THE API DIRECTLY. USE perform_update() WITH request.user TO FIRST
-#AUTHENTICATE Object LEVEL PERMISSION
+#NEW PERMISSION YET TO BE TESTED
 class StudentUpdateAppointmentView(UpdateAPIView):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentUpdateSerializer
     authentication_classes = [TokenAuthentication, ]
-    permission_classes = [IsAuthenticated, ]
-    
-#ANY USER CAN MANGE ANY OTHER USERS APPOINTMENTS IF THEY ACCESS
-#THE API DIRECTLY. USE perform_update() WITH request.user TO FIRST
-#AUTHENTICATE Object LEVEL PERMISSION
+    permission_classes = [IsAuthenticated, IsStudentOwner]
+
+#NEW PERMISSION YET TO BE TESTED
 class TutorUpdateAppointmentView(UpdateAPIView):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentUpdateSerializer
     authentication_classes = [TokenAuthentication, ]
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, IsTutorOwner ]
     
-
 class TutorDashboardView(APIView):
     authentication_classes = [TokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -174,11 +171,14 @@ class TutorDashboardView(APIView):
             tutorProfile = Tutor.objects.get(user=request.user)
             #get the sessions with with tutor object
             sessions = Appointment.objects.filter(tutor=tutorProfile)
+            #get the appointment availability slots
+            timeslots = TutorAvailability.objects.filter(tutor=tutorProfile)
             
             #serialize
             data = {
                 'tutor': tutorProfile,
-                'appointments': sessions
+                'appointments': sessions,
+                'timeslots' : timeslots
             }
             
             serializer = TutorDashboardSerializer(data)
@@ -188,3 +188,50 @@ class TutorDashboardView(APIView):
             return Response({"error": "User profile not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
+
+class GetTutorAvailabilityView(APIView):
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request):
+        try:
+            #get the Tutor instance using token
+            tutorProfile = get_object_or_404(Tutor, user=request.user)
+            #get the tutor's appointment time slots
+            timeslots = TutorAvailability.objects.filter(tutor=tutorProfile)
+            #serialize the data
+            serializer = TutorAvailabilitySerializer(timeslots, many=True)
+            #return the data
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            return Response({"error": "User profile not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
+        
+class AddTutorAvailabilityView(APIView):
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+    
+    def post(self, request):
+        try:
+            #get the Tutor instance using token 
+            tutorProfile = Tutor.objects.get(user=request.user)
+            data = request.data
+            data['tutor'] = tutorProfile.id
+            
+            serializer = TutorAvailabilitySerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
+
+class DeleteTutorAvailability(DestroyAPIView):
+    queryset = TutorAvailability
+    serializer_class = TutorAvailabilitySerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, IsTutorOwner]
+    
+        
+        
