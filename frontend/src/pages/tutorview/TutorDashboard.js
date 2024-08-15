@@ -2,8 +2,6 @@ import React, { useEffect } from "react";
 import { ThemeProvider } from "@emotion/react";
 import { createTheme, Box, Container, Grid, Paper, Typography, Button } from "@mui/material";
 
-import axios from "axios";
-
 import TutorAppointmentDialog from "../../components/dashboard/TutorAppointmentDialog";
 import TutorUpcomingAppointments from "../../components/tutor/TutorUpcomingAppointments";
 import SuccessRefreshDialog from "../../components/SuccessRefreshDialog";
@@ -34,13 +32,6 @@ export default function TutorDashboard () {
     //the open condition of timeslot confirm delete dialog
     const [confirmDelete, setConfirmDelete] = React.useState(false)
 
-    function getTokenAsync() {
-        return new Promise((resolve) => {
-          const token = localStorage.getItem('token');
-          resolve(token);
-        });
-    }
-
     const handleClose = (refresh) => {
         setApptDialogOpen(false);
     };
@@ -49,9 +40,8 @@ export default function TutorDashboard () {
         setApptDialogOpen(false)
         setTimeSlotDialog(false)
         fetchDashboardData()
-        //window.location.reload(); // This will refresh the page
+        //window.location.reload(); // This will refresh the page, not needed anymore
     }
-
 
     const handleApptDialog = (appointment) => {
         //if (markScheduledAsPostSubmission) {}
@@ -158,7 +148,7 @@ export default function TutorDashboard () {
                                 </Button>
                             </Paper>
                         </Grid>
-                        <Grid item xs={12} sm={12} md={12}>
+                        <Grid item xs={12} sm={12} md={6}>
                             <Paper elevation={12} sx={{ padding: '16px', textAlign: 'center',
                                    m: '4px'}}
                             >
@@ -166,7 +156,7 @@ export default function TutorDashboard () {
                                 <TutorUpcomingAppointments appointments={appointments} handleApptDialog={handleApptDialog} />
                             </Paper>
                         </Grid>
-                        <Grid item xs={12} sm={12} md={12}>
+                        <Grid item xs={12} sm={12} md={6}>
                             <Paper elevation={12} sx={{ padding: '16px', textAlign: 'center',
                                     m: '4px'}}
                             >

@@ -10,9 +10,11 @@ import Logout from './pages/Logout';
 import ExtraSignup from './pages/ExtraSignup';
 import TutorDashboard from './pages/tutorview/TutorDashboard';
 import SubmitEssay from './pages/appointments/SubmitEssay';
+import LandingTest from './pages/LandingTest';
 
 import TopBar from './components/TopBar';
 import NavDrawer from './components/NavDrawer';
+import About from './pages/About';
 
 export default function App() {
 
@@ -38,6 +40,9 @@ export default function App() {
         <Route path='/extra-signup' element={<ExtraSignup />} />
         <Route path='/tutor-dashboard' element={<TutorDashboard />} />
         <Route path='/submit-essay' element={<SubmitEssay />} />
+        <Route path='/report-bug' element={0} />
+        <Route path='/contact' element={0} />
+        <Route path='/testlanding' element={<LandingTest />} />
       </Routes>
 
     </>

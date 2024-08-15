@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, createTheme, ThemeProvider, Box } from '@mui/material';
+import { Container, Typography, createTheme, ThemeProvider, Box, Paper } from '@mui/material';
 import LandingButtons from '../components/LandingButtons';
 
 const theme = createTheme({
@@ -23,7 +23,7 @@ export default function Landing() {
     <ThemeProvider theme={theme}>
     <Box sx={{ bgcolor: 'primary.main', minHeight: '100vh', display: 'flex', justifyContent: 'center' }}>
         <Container sx={{ bgcolor: 'primary.main', }} >
-          <Box sx={{my: 20}}>
+          <Box sx={{my: 10}}>
               <Typography variant="h2" align="center" gutterBottom >
                   Welcome to OpenTutors
               </Typography>
@@ -32,9 +32,17 @@ export default function Landing() {
               </Typography>
           </Box>
             <LandingButtons />
-            <Typography align="center" variant='h5' sx={{my: 10}}>
-                Ut deserunt reprehenderit id consectetur pariatur pariatur. Occaecat anim proident exercitation aliqua nulla ipsum eiusmod dolor ad voluptate labore dolor elit cupidatat. Minim eiusmod reprehenderit culpa excepteur nostrud. Do incididunt pariatur culpa laboris elit ad esse magna cupidatat irure excepteur officia eiusmod deserunt. Duis est duis ipsum minim proident. Elit pariatur deserunt ad ut tempor irure exercitation.
-            </Typography>
+            <Paper elevation={12} sx={{ p: 3, my: 10 }}>
+              <Typography variant="h4" gutterBottom align='center'>
+                Our Mission
+              </Typography>
+              <Typography variant="h5" paragraph>
+                Open Tutors provides free, accessible tutoring to public school students. We believe every student deserves quality educational support, regardless of their background.
+              </Typography>
+              <Typography variant="h5">
+                By connecting passionate tutors with eager learners, we aim to bridge the educational gap and empower students to reach their full potential.
+              </Typography>
+            </Paper>
         </Container>
     </Box>
     </ThemeProvider>

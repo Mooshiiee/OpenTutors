@@ -12,6 +12,7 @@ import CottageIcon from '@mui/icons-material/Cottage';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import RocketLaunchRoundedIcon from '@mui/icons-material/RocketLaunchRounded';
+import FlagIcon from '@mui/icons-material/Flag';
 import { Link } from 'react-router-dom';
 
 export default function NavDrawer( {toggleDrawer, drawerOpen} ) {
@@ -39,6 +40,7 @@ export default function NavDrawer( {toggleDrawer, drawerOpen} ) {
                 { text: 'Home', path: '/', icon: <CottageIcon /> },
                 { text: 'Contact Us', path: '/contact', icon: <MailIcon /> },
                 { text: 'About Us', path: '/about', icon: <AutoStoriesIcon /> },
+                { text: 'Report Bug', path: '/report-bug', icon: <FlagIcon /> },
             ].map((item, index) => (
                 <ListItem key={item.text} disablePadding>
                 <ListItemButton component={Link} to={item.path}>

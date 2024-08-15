@@ -1,14 +1,18 @@
-import { Divider, Typography ,Paper,Box, Container, Button, Card, CardActionArea, Avatar, CardContent, CircularProgress, Stack, CardHeader} from '@mui/material';
+import {Typography ,Paper,Box, Container, Button,  CircularProgress, Stack} from '@mui/material';
 import Grid from '@mui/material/Grid'
 import React, { useEffect, useState} from 'react';
-import axios from 'axios';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Link, useNavigate } from 'react-router-dom';
+
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import CreateSessionGroup from '../components/dashboard/CreateSessionGroup';
 import UpcomingAppointments from '../components/dashboard/UpcomingAppointments';
 import ListTutorsDashboard from '../components/dashboard/ListTutorsDashboard';
 import AppointmentDialog from '../components/dashboard/AppointmentDialog';
+import NextSessionPaper from '../components/dashboard/NextSessionPaper';
+
+import axiosInstance from '../utils/axiosInstance';
 
 /*
 DASHBOARD will have:
@@ -19,16 +23,8 @@ DASHBOARD will have:
 -Submit essay for review
 */
 
-function getLocalTokenPromise() {
-    return new Promise((resolve, reject) => {
-        try {
-            const localToken = localStorage.getItem('token')
-            resolve(localToken)
-        } catch (error) {
-            reject(error)
-        }
-    })
-}
+
+
 
 export default function Dashboard() {
 
@@ -47,42 +43,22 @@ export default function Dashboard() {
         setApptDialogOpen(true)
     }
 
+    const dashboardFetch = () => {
+        axiosInstance.get('dashboard/')
+        .then(response => {
+            setDashboardData(response.data)
+        })
+        .catch(error => {
+            if (error.response.status === 401) {
+            navigate('/login')
+            }
+        })
+    }
+
     //fetch HomeView when page loads 
     useEffect(() => {
-        async function initAxiosWhenToken() {
-            try {
-            const token = await getLocalTokenPromise()
-            const axiosInstance = axios.create({
-                baseURL: 'http://127.0.0.1:8000/api/',
-                timeout: 1000,
-                headers: {
-                    'Authorization': `Token ${token}`,
-                }
-            });
-            const localUsername = localStorage.getItem('username')
-            
-            //API CALL :
-            axiosInstance.get('dashboard/')
-            .then(response => {
-                setDashboardData(response.data)
-            })
-            .catch(error => {
-                if (error.response.status === 401) {
-                navigate('/login')
-                }
-            })
-
-            } catch (error) {
-                console.log(error)
-            }    
-
-            
-        }
-
-        if (userData.length === 0) {
-            initAxiosWhenToken();
-        }
-    }, [userData] );
+        dashboardFetch()
+    }, [] );
 
     const defaultTheme = createTheme({
         palette: {
@@ -106,6 +82,7 @@ export default function Dashboard() {
         },
     });
     
+    const isMdUp = useMediaQuery(defaultThemetheme => defaultTheme.breakpoints.up('md'))
 
     return(
         <ThemeProvider theme={defaultTheme}>
@@ -149,6 +126,13 @@ export default function Dashboard() {
                 <Grid item xs={12} sm={6} md={4}>
                     <CreateSessionGroup lvl2complete={dashboardData.user.userprofile.lvl2complete} />
                 </Grid>
+
+                {isMdUp && (
+                    <Grid item md={4} >
+                        <NextSessionPaper appointments={dashboardData.appointments} />
+                    </Grid>
+                )}
+
                 <Grid item xs={12} sm={12} md={6}>
                     <Paper elevation={12} style={{ padding: '16px',textAlign: 'center',
                         margin: '4px' }}>
