@@ -92,7 +92,7 @@ export default function Dashboard() {
                 minHeight: '100vh',
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: 'center', 
+                alignItems: 'center',
                 }}
             >
                 <CircularProgress sx={{color: "#ffe4b5"}}/>
@@ -101,7 +101,7 @@ export default function Dashboard() {
         <Box sx={{ bgcolor: 'primary.main', my: 2}}>
             <Container>
             <Grid container spacing={2}>
-                <Grid item xs={12} sm={6} md={4}>
+                <Grid item xs={12} sm={6} md={3} lg={4}>
                     <Paper elevation={12} sx={{ padding: '16px', textAlign: 'center',
                         m: '4px', height:'190px'}}>
                         <Typography variant="h5">Hello {dashboardData.user.first_name}!</Typography>
@@ -123,13 +123,25 @@ export default function Dashboard() {
                         </Box>
                     </Paper>
                 </Grid>
-                <Grid item xs={12} sm={6} md={4}>
+                <Grid item xs={12} sm={6} md={3} lg={4}>
                     <CreateSessionGroup lvl2complete={dashboardData.user.userprofile.lvl2complete} />
                 </Grid>
 
                 {isMdUp && (
-                    <Grid item md={4} >
-                        <NextSessionPaper appointments={dashboardData.appointments} />
+                    <Grid item md={6} lg={4} >
+                        <NextSessionPaper 
+                            appointments={dashboardData.appointments} 
+                            handleApptDialog={handleApptDialog} 
+                        />
+                    </Grid>
+                )}
+
+                {!isMdUp && (
+                    <Grid item xs={12} sm={12}>
+                        <NextSessionPaper 
+                            appointments={dashboardData.appointments} 
+                            handleApptDialog={handleApptDialog}
+                        />
                     </Grid>
                 )}
 
@@ -140,6 +152,7 @@ export default function Dashboard() {
                         <UpcomingAppointments appointments={dashboardData.appointments} handleApptDialog={handleApptDialog} />
                     </Paper> 
                 </Grid>
+
                 <Grid item xs={12} sm={12} md={6}>
                     <Paper elevation={12} style={{ padding: '16px', textAlign: 'center', margin: '4px' }}>
 
@@ -166,6 +179,7 @@ export default function Dashboard() {
                 apptDialogOpen={apptDialogOpen}
                 setApptDialogOpen={setApptDialogOpen}
             />
+
             </Container>
         </Box>
         )}

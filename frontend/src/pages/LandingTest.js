@@ -5,11 +5,13 @@ import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Link from '@mui/material/Link'
 
+import RocketRoundedIcon from '@mui/icons-material/RocketRounded';
+import RocketLaunchRounded from '@mui/icons-material/RocketLaunchRounded'
+
 const navigation = [
-  { name: 'Product', href: '#' },
+  { name: 'About Us', href: '#' },
   { name: 'Features', href: '#' },
-  { name: 'Marketplace', href: '#' },
-  { name: 'Company', href: '#' },
+  { name: 'Contact', href: '#' },
 ]
 
 export default function LandingTest() {
@@ -50,13 +52,13 @@ export default function LandingTest() {
       </Box>
 
       {/* Content */}
-      <Box sx={{ position: 'relative', zIndex: 1 }}>
+      <Box sx={{ position: 'relative', zIndex: 1}}>
         <Box
           sx={{
             display: { xs: 'none', md: 'flex' },
             justifyContent: 'center',
             pt: 8,
-            pb: 4,
+            pb: 15,
           }}
         >
           {navigation.map((item) => (
@@ -68,8 +70,11 @@ export default function LandingTest() {
               {item.name}
             </Button>
           ))}
-          <Button sx={{ ml: 1.5, fontWeight: 600, fontSize: '0.875rem' }}>
-            Log in →
+          <Button 
+            sx={{ ml: 1.5, fontWeight: 600, fontSize: '0.875rem' }}
+            endIcon={<RocketLaunchRounded />}
+        >
+            Log in
           </Button>
         </Box>
 
@@ -110,6 +115,7 @@ export default function LandingTest() {
                   color="primary"
                   href="#"
                   sx={{ px: 3, py: 1.5, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none' }}
+                  endIcon={<RocketRoundedIcon />}
                 >
                   Get started
                 </Button>
