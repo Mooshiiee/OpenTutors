@@ -32,7 +32,7 @@ export default function App() {
       <TopBar toggleDrawer={toggleDrawer} setIsUserLoggedIn={setIsUserLoggedIn} />
 
       <Routes>
-        <Route path='/' element={<Landing />} />
+        <Route path='/' element={<LandingTest />} />
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/signup' element={<SignUpPage />} />
         <Route path='/login' element={<LogIn setIsUserLoggedIn={setIsUserLoggedIn} />} /> 

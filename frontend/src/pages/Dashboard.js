@@ -12,6 +12,8 @@ import ListTutorsDashboard from '../components/dashboard/ListTutorsDashboard';
 import AppointmentDialog from '../components/dashboard/AppointmentDialog';
 import NextSessionPaper from '../components/dashboard/NextSessionPaper';
 
+import GradientBackground from '../components/GradientBackground';
+
 import axiosInstance from '../utils/axiosInstance';
 
 /*
@@ -87,7 +89,7 @@ export default function Dashboard() {
     return(
         <ThemeProvider theme={defaultTheme}>
         {dashboardData.length === 0 ? (
-            <Box sx={{
+            <GradientBackground sx={{
                 bgcolor: '#8fbc8f',
                 minHeight: '100vh',
                 display: 'flex',
@@ -96,11 +98,11 @@ export default function Dashboard() {
                 }}
             >
                 <CircularProgress sx={{color: "#ffe4b5"}}/>
-            </Box>
+            </GradientBackground>
         ) : (
-        <Box sx={{ bgcolor: 'primary.main', my: 2}}>
+        <GradientBackground sx={{ my: 2,}}>
             <Container>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} sx={{pt:2}}>
                 <Grid item xs={12} sm={6} md={3} lg={4}>
                     <Paper elevation={12} sx={{ padding: '16px', textAlign: 'center',
                         m: '4px', height:'190px'}}>
@@ -181,7 +183,7 @@ export default function Dashboard() {
             />
 
             </Container>
-        </Box>
+        </GradientBackground>
         )}
         </ThemeProvider>
         

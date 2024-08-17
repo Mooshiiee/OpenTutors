@@ -13,6 +13,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
+import GradientBackground from '../components/GradientBackground';
 
 // Styled Paper component for the form
 const SignUpFormPaper = styled(Paper)(({ theme }) => ({
@@ -80,7 +81,8 @@ const SignUpFormPaper = styled(Paper)(({ theme }) => ({
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ bgcolor: 'primary.main', minHeight: '100vh' }}>
+      <Box sx={{ minHeight: '100vh' }}>
+        <GradientBackground>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Box
@@ -191,6 +193,7 @@ const SignUpFormPaper = styled(Paper)(({ theme }) => ({
             </SignUpFormPaper>
           </Box>
         </Container>
+        </GradientBackground>
       </Box>
     </ThemeProvider>
   );

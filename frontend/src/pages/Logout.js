@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
+import GradientBackground from "../components/GradientBackground";
 
 export default function Logout () {
 
@@ -60,16 +61,11 @@ export default function Logout () {
 
 
     return (
-        <Box sx={{
-            bgcolor: '#8fbc8f',
-            minHeight: '100vh',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center', 
-            }}
-        >
-            {loading ? < CircularProgress sx={{color: "#ffe4b5"}}/> : null}
-        </Box>  
+        <GradientBackground sx={{ minHeight: '100vh' }}>
+            <Box sx={{display: 'flex', justifyContent: 'center' , alignItems: 'center', pt: 32 }}>
+                {loading ? < CircularProgress sx={{color: "#ffe4b5"}}/> : null}
+            </Box>
+        </GradientBackground>  
     )
     
 }

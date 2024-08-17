@@ -16,6 +16,7 @@ import { styled } from '@mui/material/styles';
 import Stack from '@mui/material/Stack'
 
 import axios from 'axios';
+import GradientBackground from '../components/GradientBackground';
 
 const LogInFormPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -87,7 +88,7 @@ export default function LogIn( setIsUserLoggedIn ) {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ bgcolor: 'primary.main', minHeight: '100vh', display: 'flex', justifyContent: 'center' }}>
+      <GradientBackground sx={{ minHeight: '100vh', display: 'flex', justifyContent: 'center' }}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Box
@@ -164,7 +165,7 @@ export default function LogIn( setIsUserLoggedIn ) {
             </LogInFormPaper>
           </Box>
         </Container>
-      </Box>
+      </GradientBackground>
     </ThemeProvider>
   );
 }

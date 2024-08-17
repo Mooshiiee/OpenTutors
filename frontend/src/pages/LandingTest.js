@@ -3,8 +3,7 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
-import Link from '@mui/material/Link'
-
+import { Link } from 'react-router-dom'
 import RocketRoundedIcon from '@mui/icons-material/RocketRounded';
 import RocketLaunchRounded from '@mui/icons-material/RocketLaunchRounded'
 
@@ -58,7 +57,7 @@ export default function LandingTest() {
             display: { xs: 'none', md: 'flex' },
             justifyContent: 'center',
             pt: 8,
-            pb: 15,
+            pb: 8,
           }}
         >
           {navigation.map((item) => (
@@ -73,12 +72,14 @@ export default function LandingTest() {
           <Button 
             sx={{ ml: 1.5, fontWeight: 600, fontSize: '0.875rem' }}
             endIcon={<RocketLaunchRounded />}
+            component={Link} 
+            to='/login'
         >
             Log in
           </Button>
         </Box>
 
-        <Container maxWidth="xl" sx={{ pt: { xs: 4, md: 0 } }}>
+        <Container maxWidth="xl" sx={{ pt: { xs: 8, md: 4 } }}>
           <Box sx={{ maxWidth: '48rem', mx: 'auto' }}>
             <Box sx={{ display: { xs: 'none', sm: 'flex' }, justifyContent: 'center', mb: 4 }}>
               <Box
@@ -94,9 +95,9 @@ export default function LandingTest() {
               >
                 <Typography variant="body2" color="text.secondary">
                   Want to become a tutor? Sign up{' '}
-                  <Link href="#" color="primary" sx={{ fontWeight: 600, textDecoration: 'none' }}>
+                  <Button href="#" color="primary" sx={{ fontWeight: 600, textDecoration: 'none', textTransform: 'none' }}>
                     here →
-                  </Link>
+                  </Button>
                 </Typography>
               </Box>
             </Box>
@@ -116,6 +117,8 @@ export default function LandingTest() {
                   href="#"
                   sx={{ px: 3, py: 1.5, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none' }}
                   endIcon={<RocketRoundedIcon />}
+                  component={Link} 
+                  to='/signup'
                 >
                   Get started
                 </Button>
